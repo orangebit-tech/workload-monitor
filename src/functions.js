@@ -45,10 +45,11 @@ export default {
             'ready for testing',
             'closed',
             'hold',
-            'details needed',
-            'cancelled'
+            'development plan',
+            'cancelled',
         ]
         var priorities = Object.keys(tasks)
+        console.log(priorities)
         var count = 0;
         priorities.map((option) => {
             if(!disabled.includes(option.toLowerCase())){
@@ -137,10 +138,9 @@ export default {
                                     // console.log('got tasks arr', tasksArr)
                                     tasksArr.map(task => {
                                         // console.log('task ', task.subject)
-                                        if(task.subject.toLowerCase().includes(query.toLowerCase()) 
+                                        if(task.fields.summary.toLowerCase().includes(query.toLowerCase()) 
                                         || task.id.toLowerCase().includes(query.toLowerCase())
-                                        || task.firstName.toLowerCase().includes(query.toLowerCase())
-                                        || task.lastName.toLowerCase().includes(query.toLowerCase())){
+                                        || (task.fields.assignee && task.fields.assignee.displayName.toLowerCase().includes(query.toLowerCase()))){
                                             if(!result[empl]){
                                                 result[empl] = {}
                                             }
@@ -158,10 +158,9 @@ export default {
             }
             else {
                 tasks.map(item => {
-                    if(item.subject.toLowerCase().includes(query.toLowerCase()) 
+                    if(item.fields.summary.toLowerCase().includes(query.toLowerCase()) 
                     || item.id.toLowerCase().includes(query.toLowerCase())
-                    || item.firstName.toLowerCase().includes(query.toLowerCase())
-                    || item.lastName.toLowerCase().includes(query.toLowerCase())){
+                    || (item.fields.assignee && item.fields.assignee.displayName.toLowerCase().includes(query.toLowerCase()))){
                         result.push(item)
                     }
                 })

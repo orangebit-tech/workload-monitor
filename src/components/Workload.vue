@@ -11,42 +11,42 @@
                 <span class="hide-button" style="position: absolute; left: 15px; bottom: 15px;" @click="addToBlacklistLocal({name: name, skipRefresh: 'false'})">Hide</span>
             </div>
             <div style="text-align: left;" class="column">
-                <div class="title" style="text-align: center">New Tasks <span class="number">{{items[name]['new'] ? items[name]['new'].length : 0}}</span></div>
+                <div class="title" style="text-align: center">Development Plan <span class="number">{{items[name]['development plan'] ? items[name]['development plan'].length : 0}}</span></div>
                 <div class="tasks">
-                    <div class="task" v-for="(task, index) in items[name]['new']" :key="index+name">
+                    <div class="task" v-for="(task, index) in items[name]['development plan']" :key="index+name">
                         <div>
-                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.priority).color}"></div>
-                            <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+task.id"> {{task.id}} </a> 
+                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                            <a style="display: inline-block;" target="_blank" :href="task.self"> {{task.id}} </a> 
                             <span style="float: right;margin-right: 10px; color: #126db6" class="task-type">{{task.taskType}}</span>
                         </div>
                         <div class="subject">
-                           <span>{{task.subject}}</span> 
+                           <span>{{task.fields.summary}}</span> 
                            <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="column">
-                <div class="title" style="text-align: center">In Progress <span class="number">{{items[name]['in progress'] ? items[name]['in progress'].length : 0}}</span></div>
+                <div class="title" style="text-align: center">In Development <span class="number">{{items[name]['in development'] ? items[name]['in development'].length : 0}}</span></div>
                 <div class="tasks">
-                    <div class="task" v-for="(task, index) in items[name]['in progress']" :key="index+name">
+                    <div class="task" v-for="(task, index) in items[name]['in development']" :key="index+name">
                         <div>
-                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.priority).color}"></div>
-                            <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+task.id"> {{task.id}} </a> 
+                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                            <a style="display: inline-block;" target="_blank" :href="task.self"> {{task.id}} </a> 
                             <span style="float: right;margin-right: 10px; color: #126db6" class="task-type">{{task.taskType}}</span>
                         </div>
                         <div class="subject">
-                           <span>{{task.subject}}</span>
-                           <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
+                           <span>{{task.fields.summary}}</span>
+                           <span v-if="task.fields.timeestimate" style="font-style: italic">~{{task.fields.timeestimate}} hours</span>
                         </div>
                         <div class="progress">
                             <div
                                 class="progress-bar bg-succsess"
                                 role="progressbar"
-                                :style="{ width: task.done_ratio + '%'}"
+                                :style="{ width: task.fields.progress.progress + '%'}"
                                 aria-valiemin="0"
                                 style="border-radius: 0px 6px 6px 0px;"
-                                aria-valuemax="100"
+                                :aria-valuemax="task.fields.progress.total"
                             >
                             </div>
                         </div>
@@ -54,16 +54,16 @@
                 </div>
             </div>
             <div class="column">
-                <div class="title" style="text-align: center">Details / Assistance <span class="number">{{items[name]['details needed'] ? items[name]['details needed'].length : 0}}</span></div>
+                <div class="title" style="text-align: center">Tech Review <span class="number">{{items[name]['tech review'] ? items[name]['tech review'].length : 0}}</span></div>
                 <div class="tasks">
-                    <div class="task" v-for="(task, index) in items[name]['details needed']" :key="index+name">
+                    <div class="task" v-for="(task, index) in items[name]['tech review']" :key="index+name">
                         <div>
-                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.priority).color}"></div>
-                            <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+task.id"> {{task.id}} </a> 
+                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                            <a style="display: inline-block;" target="_blank" :href="task.self"> {{task.id}} </a> 
                             <span style="float: right;margin-right: 10px; color: #126db6" class="task-type">{{task.taskType}}</span>
                         </div>
                         <div class="subject">
-                           <span>{{task.subject}}</span>
+                           <span>{{task.fields.summary}}</span>
                            <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                         </div>
                         <div class="progress">
@@ -85,12 +85,12 @@
                 <div class="tasks">
                     <div class="task" v-for="(task, index) in items[name]['paused']" :key="index+name">
                         <div>
-                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.priority).color}"></div>
-                            <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+task.id"> {{task.id}} </a> 
+                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                            <a style="display: inline-block;" target="_blank" :href="task.self"> {{task.id}} </a> 
                             <span style="float: right;margin-right: 10px; color: #126db6" class="task-type">{{task.taskType}}</span>
                         </div>
                         <div class="subject">
-                           <span>{{task.subject}}</span>
+                           <span>{{task.fields.summary}}</span>
                            <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                         </div>
                         <div class="progress">
@@ -108,16 +108,16 @@
                 </div>
             </div>
             <div class="column">
-                <div class="title" style="text-align: center">Completed <span class="number">{{items[name]['completed'] ? items[name]['completed'].length : 0}}</span></div>
+                <div class="title" style="text-align: center">Done <span class="number">{{items[name]['done'] ? items[name]['done'].length : 0}}</span></div>
                 <div class="tasks">
-                    <div class="task" v-for="(task, index) in items[name]['completed']" :key="index+name">
+                    <div class="task" v-for="(task, index) in items[name]['done']" :key="index+name">
                         <div>
-                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.priority).color}"></div>
-                            <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+task.id"> {{task.id}} </a> 
+                            <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                            <a style="display: inline-block;" target="_blank" :href="task.self"> {{task.id}} </a> 
                             <span style="float: right;margin-right: 10px; color: #126db6" class="task-type">{{task.taskType}}</span>
                         </div>
                         <div class="subject">
-                           <span>{{task.subject}}</span>
+                           <span>{{task.fields.summary}}</span>
                            <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                         </div>
                         <div class="progress">
@@ -139,12 +139,12 @@
                 <div class="tasks">
                     <div class="task" v-for="(task, index) in items[name]['ready for testing']" :key="index+name">
                         <div>
-                           <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.priority).color}"></div>
-                           <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+task.id"> {{task.id}} </a> 
+                           <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                           <a style="display: inline-block;" target="_blank" :href="task.self"> {{task.id}} </a> 
                            <span style="float: right;margin-right: 10px; color: #126db6" class="task-type">{{task.taskType}}</span>
                         </div>
                         <div class="subject">
-                           <span>{{task.subject}}</span>
+                           <span>{{task.fields.summary}}</span>
                            <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                         </div>
                         <div class="progress">

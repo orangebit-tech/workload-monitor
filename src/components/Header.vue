@@ -13,7 +13,7 @@ export default {
     name: 'Header',
     data(){
         return {
-            logoUrl: {sample: 'https://h3.maintstar.co/Presentation1/App_Themes_MS/img/maintstar_logo_white.png'}
+            logoUrl: {sample: ''}
         }
     }
 }

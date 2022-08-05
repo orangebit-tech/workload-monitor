@@ -32,26 +32,26 @@
        <div v-for="(issue, index) in sortItems(functions.searchFilter(getAllIssues, query), filters[0])" :key="index">
            <div class="item" >
                <div style="width: 8%" class="column">
-                   <div class="priority-circle" :style="{backgroundColor: functions.getPriority(issue.priority).color}"></div>
+                   <div class="priority-circle" :style="{backgroundColor: functions.getPriority(issue.fields.priority.id).color}"></div>
                    <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+issue.id"> {{issue.id}} </a>
                </div>
                 <div style="width: 29%; margin-right: 1%; max-width: 350px" class="column">
-                   {{issue.subject}}
+                   {{issue.fields.summary}}
                </div>
                <div class="column">
-                   {{issue.firstName}} {{issue.lastName[0]}}
+                   {{issue.assignee ? issue.assignee.displayName : 'Unassigned'}}
                </div>
                <div class="column">
-                   {{issue.permitCustomer}}
+                   {{issue.fields.creator.displayName}}
                </div>
-               <div style="width: 7%" class="column">
+               <!-- <div style="width: 7%" class="column">
                    {{issue.tracker}}
+               </div> -->
+               <div class="column">
+                   {{issue.fields.status.name}}
                </div>
                <div class="column">
-                   {{issue.status}}
-               </div>
-               <div class="column">
-                   {{functions.howLongAgo(issue.created_on)}}
+                   {{functions.howLongAgo(issue.fields.created)}}
                </div>
            </div>
        </div>
@@ -194,5 +194,6 @@ input:focus {
     color: #6d6e71;
     padding-left: 5px;
     padding-right: 5px;
+    overflow: hidden;
 }
 </style>

@@ -57,7 +57,7 @@ Vue.use(VueRouter)
 
 export const router = new VueRouter({
     // easier to host, otherwise need to write route rewrite
-    mode: 'hash',
+    mode: 'history',
     linkExactActiveClass: 'is-active',
     routes
 })

@@ -66,19 +66,17 @@ const actions = {
         console.log('issues fetch started')
         await axios({
             // Cores?
-            url: '/redmine/redmines.php',
+            // url: `${process.env.VUE_APP_JIRA_API}/issues/${'CRM-2305'}`,
+            // url: `${'https://a3i3.dev:8443'}/jira/`,
+            url: `${'https://americor.atlassian.net/rest/api/latest/search?jql=project=CRM&maxResults=10000'}`,
             method: 'get',
             headers: {
                 'Content-Type': `application/json`,
             },
-            // url: `${SETTINGS.SERVER_URL}?period=${period}`,
-            // method: 'get',
-            // headers: {
-            //     'Content-Type': `application/json`,
-            //     // 'Authorization': `Bearer ${}`
-            // },
         }).then((response) => {
-            issues = response.data ? response.data : []
+            console.log('received response', response)
+            issues = response.data?.issues ? response.data.issues : []
+            console.log("ISSUES:", issues)
             store.dispatch('sortIssues', {items: issues, filters: {hiddenAssignees: getters.hiddenAssignees}})
             // console.log('fetch issues response: ', issues)
             commit("SET_ISSUES_LOADING", false)
@@ -99,25 +97,26 @@ const actions = {
         var assignees = []
         var customers = []
         var desiredStatusList = [
-            'new',
-            'in progress',
-            'details needed',
-            'completed',
+            'development plan',
+            'in development',
+            'tech review',
+            'done',
             'ready for testing',
             'paused'
         ]
         var all = []
         var sorted = {}
         if(localitems){
+            console.log("LOCALITEMS", localitems)
             localitems.map(item => {
-                var name = item.firstName + ' ' + item.lastName
-                var status = item.status.toLowerCase()
+                var name = item.fields.assignee?.displayName ? item.fields.assignee.displayName : ""
+                var status = item.fields.status.name.toLowerCase()
                 if(!assignees.includes(name)){
                     assignees.push(name)
                 }
                 if(!assigneesBlackList.includes(name)){
-                    if(!customers.includes(item.permitCustomer)){
-                        customers.push(item.permitCustomer)
+                    if(!customers.includes(item.fields.creator.displayName)){
+                        customers.push(item.fields.creator.displayName)
                     }
                     if(!sorted[name]){
                         sorted[name] = {}
@@ -126,7 +125,7 @@ const actions = {
                         sorted[name][status] = []
                     }
                     // sort filter statuses
-                    if(desiredStatusList.includes(item.status.toLowerCase())){
+                    if(item.fields.status && desiredStatusList.includes(item.fields.status.name.toLowerCase())){
                         
                         all.push(item)
                         sorted[name][status].push(item)                
@@ -138,7 +137,7 @@ const actions = {
             assignees.map((assignee) => {
                 Object.keys(sorted[assignee]).map((status) => {
                     sorted[assignee][status] = sorted[assignee][status].sort((a, b) => {
-                        return parseInt(a.priority.substring(0, a.priority.indexOf('-'))) - parseInt(b.priority.substring(0, b.priority.indexOf('-')))
+                        return parseInt(a.fields.priority.id) - parseInt(b.fields.priority.id)
                     })
                 })
             })
