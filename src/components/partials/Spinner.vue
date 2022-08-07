@@ -6,7 +6,7 @@
           <half-circle-spinner
             :animation-duration="1000"
             :size="80"
-            color="#126db6"
+            color="#4773BA"
           />
         </div>
       </div>
@@ -34,16 +34,15 @@ export default {
 .loader {
   position: relative;
   z-index: 9999;
-  margin-top: -30px;
 }
 .loader-div{
   text-align: center;
   position: relative;
-  height: 600px;
+  height: 73vh;
 }
 .loading-spinner {
   padding-top: 65px;
-  padding-bottom: 408px;
+  padding-bottom: 67vh;
   width: 100%;
   display: block;
   background-color: white;
@@ -57,13 +56,11 @@ export default {
 }
 .message {
   margin-top: 10px; 
-  color: #126db6; 
+  color: #4773BA; 
   font-size: 18px;
 }
 .green {
-  color: #7bc143 !important;
+  color: #5fb037 !important;
 }
-.red {
-  color: #e64759 !important;
-}
+
 </style>

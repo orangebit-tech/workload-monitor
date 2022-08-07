@@ -5,13 +5,13 @@ export default {
                 id: 1,
                 priority: 'Emengency',
                 priority_id: '7',
-                color: 'red',
+                color: '#d53e1a',
             },
             {
                 id: 2,
                 priority: 'Immediate',
                 priority_id: '6',
-                color: '#EAC664',
+                color: '#ff9800',
             },
             {
                 id: 3,
@@ -23,7 +23,7 @@ export default {
                 id: 4,
                 priority: 'Normal',
                 priority_id: '4',
-                color: '#7bc143',
+                color: '#5fb037',
             },
             {
                 id: 5,
@@ -139,7 +139,7 @@ export default {
                                     tasksArr.map(task => {
                                         // console.log('task ', task.subject)
                                         if(task.fields.summary.toLowerCase().includes(query.toLowerCase()) 
-                                        || task.id.toLowerCase().includes(query.toLowerCase())
+                                        || task.key.toLowerCase().includes(query.toLowerCase())
                                         || (task.fields.assignee && task.fields.assignee.displayName.toLowerCase().includes(query.toLowerCase()))){
                                             if(!result[empl]){
                                                 result[empl] = {}
@@ -159,7 +159,7 @@ export default {
             else {
                 tasks.map(item => {
                     if(item.fields.summary.toLowerCase().includes(query.toLowerCase()) 
-                    || item.id.toLowerCase().includes(query.toLowerCase())
+                    || item.key.toLowerCase().includes(query.toLowerCase())
                     || (item.fields.assignee && item.fields.assignee.displayName.toLowerCase().includes(query.toLowerCase()))){
                         result.push(item)
                     }
