@@ -1,6 +1,6 @@
 <template>
     <div v-if="!getIssuesLoading" class="items-widget">
-       <div v-for="(customer, index) in getCustomers" :key="index">
+       <div v-for="(customer, index) in getDepartments" :key="index">
            <div class="item" >
                {{customer}}
                <!-- <div class="column">
@@ -36,7 +36,7 @@ import Spinner from './partials/Spinner.vue'
 import FUNCTIONS        from '../functions.js'
 
 export default {
-    name: 'Customers',
+    name: 'Departments',
     components: {
         Spinner
     },
@@ -47,7 +47,7 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getCustomers',
+            'getDepartments',
             'getIssuesLoading'
         ]),
         functions: () => FUNCTIONS

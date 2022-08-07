@@ -4,7 +4,7 @@ import App              from '../App.vue'
 import Home             from '../components/Home'
 import Settings         from '../components/Settings'
 import Dashboard        from '../components/Dashboard'
-import Customers        from '../components/Customers'
+import Departments      from '../components/Departments'
 import Items            from '../components/Items'
 
 export const routes = [
@@ -42,9 +42,9 @@ export const routes = [
                         ]
                     },
                     {
-                        path: "/home/customers",
-                        name: "Customers",
-                        component: Customers,
+                        path: "/home/departments",
+                        name: "Departments",
+                        component: Departments,
                         children: [
                         ]
                     },

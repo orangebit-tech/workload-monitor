@@ -1,7 +1,7 @@
 <template>
-    <div v-if="!getIssuesLoading" class="items-widget">
+    <div v-if="!getIssuesLoading" class="display-block items-widget">
         <div class="filters">
-            <input style="font-size: 14px;" placeholder="Search" v-model="query" class="filter-option" />
+            <input placeholder="Search" v-model="query" class="filter-option" />
         </div>
         <div class="column-names">
             <div class="item">
@@ -16,7 +16,7 @@
                 <a :class="{active: ifActiveOption('Assignee')}" @click="setFilter('Assignee')">Assignee</a>
             </div>
             <div class="column">
-                <a :class="{active: ifActiveOption('Assignee')}" @click="setFilter('Customer')">Customer</a>
+                <a :class="{active: ifActiveOption('Assignee')}" @click="setFilter('Department')">Department</a>
             </div>
             <div style="width: 7%;" class="column">
                 <a :class="{active: ifActiveOption('Tracker')}" @click="setFilter('Tracker')">Tracker</a>
@@ -91,8 +91,8 @@ export default {
             if(filterBy == 'Assignee'){
                 return result.sort((a,b) => a.firstName.localeCompare(b.firstName))
             }
-            if(filterBy == 'Customer'){
-                return result.sort((a,b) => a.permitCustomer.localeCompare(b.permitCustomer))
+            if(filterBy == 'Department'){
+                return result.sort((a,b) => a.permitDepartment.localeCompare(b.permitDepartment))
             }
             if(filterBy == 'Tracker'){
                 return result.sort((a,b) => a.tracker.localeCompare(b.tracker))
@@ -138,19 +138,22 @@ export default {
 <style>
 .filters {
     text-align: left;
-    padding: 15px;
-    border-bottom: 1px solid #F6FBFE;
-    margin-bottom: 15px;
+    padding: 18px 0px;
 }
 .filters input {
-    border: 1px solid #CBD8E4;
-    padding-left: 5px;
-    padding-top:2px;
-    padding-bottom: 2px;
-    padding-right: 2px;
+    border: 1px solid #dedfe0;
+    padding-left: 1.072em;
+    padding-right: 1.072em;
+    line-height: 32px;
+    font-size: 1rem;
+    -webkit-box-shadow: 0 1px 4px 0 rgb(0 0 0 / 10%);
+    width: 11%;
+}
+.filters input[type=checkbox] {
+   width: 100%;
 }
 .active {
-    color: #7bc143;
+    color: #5fb037;
 }
 input:focus {
     outline: none;
@@ -172,18 +175,31 @@ input:focus {
     cursor: pointer;
 }
 .column-names .column .priority-circle{
-    border:1px solid #126db6;
+    border:1px solid #4773BA;
     cursor: pointer;
 }
 .column-names .column .priority-circle:hover{
-    background-color: #7bc143 !important;
+    background-color: #5fb037 !important;
 }
 .column-names .column .priority-circle.active {
-    background-color: #7bc143 !important;
+    background-color: #5fb037 !important;
 }
 .item {
     font-size: 14px;
 }
+.column {
+    width: 10%;
+    display: inline-block;
+    border-right: 1px solid #F6FBFE;
+    margin-right: 1%;
+    vertical-align: middle;
+    color: #757575;
+    padding-left: 5px;
+    padding-right: 5px;
+    overflow: hidden;
+}
+</style>
+<style scoped>
 .column {
     padding-top: 7px;
     width: 10%;
@@ -191,7 +207,7 @@ input:focus {
     border-right: 1px solid #F6FBFE;
     margin-right: 1%;
     vertical-align: middle;
-    color: #6d6e71;
+    color: #757575;
     padding-left: 5px;
     padding-right: 5px;
     overflow: hidden;
