@@ -16,8 +16,15 @@
         <div class="buttons">
             <router-link is-active="is-active" 
             :class="{'is-still-active': $route.path.includes(button.name.toLowerCase() + '/')}" 
-            class="button" v-for="(button, index) in buttons" 
-            :key="index" :to="button.url" >{{button.name}}
+            class="button top-button" v-for="(button, index) in buttons" 
+            :key="index" :to="button.url" >
+            <!-- ICON -->
+            <ViewCompact v-if="button.icon == 'ViewCompact'" />
+            <ClipboardCheck v-if="button.icon == 'ClipboardCheck'" />
+            <Cog v-if="button.icon == 'Cog'" />
+                 
+            <!-- TEXT -->
+            {{button.name}}
             </router-link>
         </div>
         <!-- <div class="display-block filters">
@@ -90,20 +97,24 @@ export default {
             ],
             buttons: [
                 {
-                name: 'Dashboard',
-                url: '/home/dashboard'
+                name: 'Workload',
+                url: '/home/dashboard',
+                icon: 'ViewCompact'
                 },
                 {
-                name: 'All Tasks',
-                url: '/home/items'
+                name: 'Tasks',
+                url: '/home/items',
+                icon: 'ClipboardCheck'
                 },
                 {
-                name: 'Customers',
-                url: '/home/customers'
+                name: 'Departments',
+                url: '/home/departments',
+                icon: 'ViewCompact'
                 },
                 {
                 name: 'Settings',
-                url: '/home/settings'
+                url: '/home/settings',
+                icon: 'Cog'
                 },
             ],
         }
@@ -134,37 +145,38 @@ export default {
 text-align: right;
 }
 .buttons {
-    margin-top: 34px;
-    background-color: #06487d;
+    margin-top: 3.75rem;
+    background-color: white;
     margin-left: -10px;
     margin-right: -10px;
     text-align: left;
-    height: 50px;
+    height: 4.286rem;
     padding-left:30px;
+    -webkit-box-shadow: 0 1px 4px 0 rgb(0 0 0 / 10%)
     
 }
 .header {
-    /* background-color: #126db6; */
+    /* background-color: #4773BA; */
     position: absolute;
     top:0px;
     right: 0px;
     left: 0px;
-    background-color: #136db9;
-    color: white;
-    padding: 10px 20px;
+    background-image: linear-gradient(to bottom,#4683c7,#3367a1);
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 15%);
+    padding: 0px 20px;
     text-align: left;
-    height: 22px;
+    height: 4.286rem;
    
 }
 .filters {
     height: 120px;
     border-radius: 6px;
-    border: 1px solid #F6FBFE;
     margin-top: 20px;
     padding: 2%;
     padding-top: 1%;
+    padding-left:0px;
 }
 .title-small {
-    color: #126db6;
+    color: #757575;
 }
 </style>

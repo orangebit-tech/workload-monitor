@@ -1,30 +1,17 @@
 <template>
     <div class="display-block">
         <div class="widget">
-            <div style="margin-left: 5px;" class="filters">
-                <input style="font-size: 14px;" placeholder="Search" v-model="query" class="filter-option" />
+            <div class="filters">
+                <input placeholder="Search" v-model="query" class="filter-option" />
                 <div class="filter-options">
                     <span v-click-outside="closeDropdown" class="filter-option">
-                        <div style="margin-right: 15px;"  class="filter-button" >
-                            <!-- Assigneer Filter -->
-                            <div @click="openDropdown('assignees')">
-                                <span style="margin-right: 20px;">Select Assignees</span>
-                                <span style="font-size: 12px;">▼</span>
-                            </div>
-                            <div  style="min-width: 166px;" v-if="assigneesDropdown == true" class="dropdown">
-                                <div>
-                                    <div class="assignee">
-                                        <span style="color: #6d6e71;">All</span>
-                                        <span style="float: right; opacity: 0.8" class="undo">
-                                            <input style="" type="checkbox" v-model="all"/> </span>
-                                    </div>
-                                    <div @click="singleUpdate = true" class="assignee" v-for="(assignee, index) in getAssigneesList" :key="index">
-                                        <span style="color: #6d6e71;">{{assignee}}</span>
-                                        <span style="float: right; opacity: 0.8" class="undo">
-                                            <input style="" type="checkbox" v-model="assigneesList[index]"/> </span>
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Sort By -->
+                        <div style="display: inline-block; " >
+                            <label for="pet-select">Group by:</label>
+                            <select v-model="groupBy" name="Group by">
+                                <option value="assignee">Assignee</option>
+                                <option value="team" style="margin-right: 20px;">Team</option>
+                            </select>
                         </div>
                         <!-- Sort By -->
                         <div style="display: inline-block; " >
@@ -34,10 +21,32 @@
                                 <option value="priority" style="margin-right: 20px;">Priority</option>
                             </select>
                         </div>
+                        <!-- SELECT ASSIGNEES -->
+                        <div v-if="getGroupBy == 'assignee'" style="margin-left: 30px;"  class="filter-button" >
+                            <!-- Assigneer Filter -->
+                            <div @click="openDropdown('assignees')">
+                                <span style="margin-right: 20px;">Select Assignees</span>
+                                
+                            </div>
+                            <div  style="min-width: 166px;" v-if="assigneesDropdown == true" class="dropdown">
+                                <div>
+                                    <div class="assignee">
+                                        <span style="color: #757575;">All</span>
+                                        <span style="float: right; opacity: 0.8" class="undo">
+                                            <input style="" type="checkbox" v-model="all"/> </span>
+                                    </div>
+                                    <div @click="singleUpdate = true" class="assignee" v-for="(assignee, index) in getAssigneesList" :key="index">
+                                        <span style="color: #757575;">{{assignee}}</span>
+                                        <span style="float: right; opacity: 0.8" class="undo">
+                                            <input style="" type="checkbox" v-model="assigneesList[index]"/> </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </span>
                 </div>
             </div>
-            <Workload :items="functions.searchFilter(getSortedIssues, query)" />
+            <Workload :items="getItems()" />
         </div>
     </div>
 </template>
@@ -58,6 +67,11 @@ export default {
         ClickOutside
     },
     watch: {
+        groupBy(n){
+            if(n == 'assignee' || n == 'team'){
+                this.setGroupBy(n)
+            }
+        },
         sortBy(n){
             if(n == 'priority' || n == 'date'){
                 this.applyFilter(n)
@@ -86,18 +100,21 @@ export default {
     },
     computed: {
         ...mapGetters({
-            getAllIssues: 'getAllIssues',
-            getTimePeriod: 'getTimePeriod',
-            getSortedIssues: 'getSortedIssues',
-            getFilters : 'getFilters',
-            hiddenAssignees: 'hiddenAssignees',
-            getAssigneesList: 'getAssigneesList'
+            getAllIssues:       'getAllIssues',
+            getTimePeriod:      'getTimePeriod',
+            getSortedIssues:    'getSortedIssues',
+            getFilters :        'getFilters',
+            hiddenAssignees:    'hiddenAssignees',
+            getAssigneesList:   'getAssigneesList',
+            getGroupBy:         'getGroupBy',
+            getSortedTeams:     'getSortedTeams'
         }),
         assignees: function() { return  this.assigneesList},
         functions: () => FUNCTIONS
     },
     data(){
         return {
+            groupBy:                'assignee',
             singleUpdate:           true,
             assigneesDropdown:      false,
             assigneesList:          [],
@@ -111,13 +128,13 @@ export default {
                     id: 1,
                     priority: 'Emengency',
                     priority_id: '7',
-                    color: 'red',
+                    color: '#d53e1a',
                 },
                 {
                     id: 2,
                     priority: 'Immediate',
                     priority_id: '6',
-                    color: '#EAC664',
+                    color: '#ff9800',
                 },
                 {
                     id: 3,
@@ -129,7 +146,7 @@ export default {
                     id: 4,
                     priority: 'Normal',
                     priority_id: '4',
-                    color: '#7bc143',
+                    color: '#5fb037',
                 },
                 {
                     id: 5,
@@ -144,8 +161,20 @@ export default {
         ...mapActions([
             'addAToBlacklist',
             'removeFromBlacklist',
-            'sortIssues'
+            'sortIssues',
+            'setGroupBy',
         ]),
+        getItems(){
+            console.log(this.getGroupBy)
+            console.log(this.functions.searchFilter(this.getSortedIssues, this.query))
+            console.log(this.getSortedTeams)
+            if(this.getGroupBy && this.getGroupBy == 'assignee'){
+                return this.functions.searchFilter(this.getSortedIssues, this.query)
+            }
+            if(this.getGroupBy && this.getGroupBy == 'team'){
+                return this.getSortedTeams
+            }
+        },
         applyFilter(filter){
             this.sortIssues({items: this.getAllIssues, filters: {sortBy: filter}})
         },
@@ -206,23 +235,39 @@ export default {
             }
         }
     },
+    created(){
+        console.log(this.getSortedTeams)
+    }
 }
 </script>
 
 <style scoped>
 .filter-button {
     display: inline-block;
-    border: 1px solid #CBD8E4;
+    background-color: #fff;
+    border: 1px solid #dedfe0;
+    border-radius: 0.215rem;
     cursor: pointer;
-    font-size: 13.4px;
-    padding: 2px 5px;
     margin-left: 15px;
     min-width: 100px;
+    padding-left: 1.072em;
+    padding-right: 1.072em;
+    line-height: 34px;
+    font-size: 1rem;
+    -webkit-box-shadow: 0 1px 4px 0 rgb(0 0 0 / 10%)
 }
 .select-option {
     padding: 5px;
-    color: #6d6e71;
+    color: #757575;
    
+}
+select {
+    border-radius: 0.215rem;
+    padding-left: 1.072em;
+    padding-right: 1.072em;
+    height: 36px !important;
+    font-size: 1rem;
+    -webkit-box-shadow: 0 1px 4px 0 rgb(0 0 0 / 10%)
 }
 .select-option:hover {
      background-color: #136DB9;
@@ -231,28 +276,32 @@ export default {
      color: #fff;
 }
 .assignee {
-    margin-bottom: 10px;
+    border-bottom: 1px solid #dedfe0;
+    margin-left: 1.072em;
+    margin-right: 1.072em;
+        padding-top: 4px;
+    padding-bottom: 4px;
 }
 .dropdown {
     position: absolute;
     border-radius: 3px;
-    box-shadow: 1px 1px 1px #CBD8E4;
-    border: 1px solid #CBD8E4;
+    box-shadow: 1px 1px 1px #dedfe0;
+    border: 1px solid #dedfe0;
     background-color: white;
-    margin-left: -5px;
+    margin-left: -18px;
     margin-top: 5px;
     padding: 5px;
     z-index: 9999;
 }
 .filter-button span{
-    color: #6d6e71;
+    color: #757575;
 }
 .filter-option select{
     outline: none;
-    margin-left: 15px;
+    margin-left: 8px;
     height: 22px;
-    border-color: #CBD8E4;
-    color: #6d6e71;
+    border-color: #dedfe0;
+    color: #757575;
     
 }
 .filter-options {
@@ -264,14 +313,14 @@ export default {
     height: 10px;
     width: 10px;
     border-radius: 50%;
-    background-color: #6d6e71;
+    background-color: #757575;
     display: inline-block;
     opacity: 0.9;
 }
 .pass {
-    background-color: #7bc143;
-    -webkit-box-shadow: 0 0 3px #7bc143;
-        box-shadow: 0 0 3px #7bc143;
+    background-color: #5fb037;
+    -webkit-box-shadow: 0 0 3px #5fb037;
+        box-shadow: 0 0 3px #5fb037;
 }
 .fail {
     background-color: #F5F232;
@@ -279,7 +328,7 @@ export default {
         box-shadow: 0 0 3px #F5F232;
 }
 h4 {
-    color: #6d6e71;
+    color: #757575;
     font-size: 20px;
     letter-spacing: 1px;
     font-weight: 500;
@@ -292,7 +341,7 @@ img {
     border-radius: 6px;;
 }
 span {
-    color: #126DB6;
+    color: #4773BA;
 }
 .item {
     padding: 5px;
