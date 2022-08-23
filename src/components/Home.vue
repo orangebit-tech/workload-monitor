@@ -1,44 +1,46 @@
 <template>
     <div>
-    <div class="header">
-      <Header class="wide"/>
+       
+        <div class="header">
+            <Header class="wide"/>
             <!-- <NavbarMob :buttons="buttons"/> -->
-      </div>
-        <div class="main-frame">
-            <!-- <div class="time-period-switch">
-                <select :value="timePeriod" class="select" v-model="timePeriod">
-                    <option  v-for="(option, index) in timeOoptions" :key="index">
-                        {{option.name}}
-                    </option>
-                </select>
-            </div> -->
         </div>
-        <div class="buttons">
+        <fullscreen style="background-color: #F3F4F6; overflow-y: scroll; overflow-x: hidden" v-model="fullscreen">
+        <div :style="[fullscreen ? {'margin-top': 0+'px'}:{}]" class="buttons">
             <router-link is-active="is-active" 
             :class="{'is-still-active': $route.path.includes(button.name.toLowerCase() + '/')}" 
             class="button top-button" v-for="(button, index) in buttons" 
             :key="index" :to="button.url" >
-            <!-- ICON -->
-            <ViewCompact v-if="button.icon == 'ViewCompact'" />
-            <ClipboardCheck v-if="button.icon == 'ClipboardCheck'" />
-            <Cog v-if="button.icon == 'Cog'" />
-                 
-            <!-- TEXT -->
-            {{button.name}}
+                <!-- ICON -->
+                <ViewCompact v-if="button.icon == 'ViewCompact'" />
+                <ClipboardCheck v-if="button.icon == 'ClipboardCheck'" />
+                <Cog v-if="button.icon == 'Cog'" />
+                <!-- TEXT -->
+                {{button.name}}
             </router-link>
+            
+            <!-- <a @click="test()">Test</a> -->
+            
+            <a style="float: right; margin-right: 40px; cursor: pointer" type="button" :class="{'is-active': fullscreen}" class="button top-button" @click="toggle" >Fullscreen</a>
+            <!-- Api  -->
+            <!-- <button type="button" @click="toggleApi" >FullscreenApi</button> -->
+            <!-- Directive  -->
+            <!-- <button type="button" v-fullscreen >FullscreenDirective</button> -->
         </div>
         <!-- <div class="display-block filters">
             <span class="title-small">Filters</span>
         </div> -->
         <div class="router-2">
             <router-view></router-view>
+          
         </div>
-
+        </fullscreen>
     </div>
 </template>
 
 <script>
 import Header from './Header.vue'
+import FUNCTIONS from '../functions.js'
 import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'Home',
@@ -55,12 +57,15 @@ export default {
     computed: {
         ...mapGetters([
             'getIssuesLoading',
-            'getTimePeriod'
-        ])
+            'getTimePeriod',
+            'getAllIssues',
+        ]),
+        functions: () => FUNCTIONS
     },
     data(){
         return {
             timePeriod: 'Last Week',
+            fullscreen: false,
             timeOoptions: [
                 {
                     name: 'Last year',
@@ -97,24 +102,29 @@ export default {
             ],
             buttons: [
                 {
-                name: 'Workload',
-                url: '/home/dashboard',
-                icon: 'ViewCompact'
+                    name: 'Workload',
+                    url: '/home/dashboard',
+                    icon: 'ViewCompact'
                 },
                 {
-                name: 'Tasks',
-                url: '/home/items',
-                icon: 'ClipboardCheck'
+                    name: 'PM Board',
+                    url: '/home/pms',
+                    icon: 'ViewCompact'
                 },
                 {
-                name: 'Departments',
-                url: '/home/departments',
-                icon: 'ViewCompact'
+                    name: 'Departments',
+                    url: '/home/departments',
+                    icon: 'ViewCompact'
                 },
                 {
-                name: 'Settings',
-                url: '/home/settings',
-                icon: 'Cog'
+                    name: 'Tasks',
+                    url: '/home/items',
+                    icon: 'ClipboardCheck'
+                },
+                {
+                    name: 'Settings',
+                    url: '/home/settings',
+                    icon: 'Cog'
                 },
             ],
         }
@@ -122,8 +132,18 @@ export default {
     methods: {
         ...mapActions([
             'setTimePeriod',
-            'fetchAllIssues'
+            'fetchAllIssues',
+            'fetchPmTasks'
         ]),
+        test(){
+            console.log('all issues: ', this.getAllIssues)
+        },
+        toggle () {
+            this.fullscreen = !this.fullscreen
+        },
+        toggleApi () {
+            this.$fullscreen.toggle()
+        },
         convertTime(time, options){
             var result = ''
             options.map(option => {
@@ -136,6 +156,9 @@ export default {
     },
     created(){
          this.fetchAllIssues(this.getTimePeriod)
+         setTimeout(() => {
+            this.fetchPmTasks()
+         }, 300);
     }
 }
 </script>
@@ -174,7 +197,8 @@ text-align: right;
     margin-top: 20px;
     padding: 2%;
     padding-top: 1%;
-    padding-left:0px;
+    padding-left:20px;
+    
 }
 .title-small {
     color: #757575;

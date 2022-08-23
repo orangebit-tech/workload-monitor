@@ -6,11 +6,12 @@
                 <div class="filter-options">
                     <span v-click-outside="closeDropdown" class="filter-option">
                         <!-- Sort By -->
-                        <div style="display: inline-block; " >
-                            <label for="pet-select">Group by:</label>
-                            <select v-model="groupBy" name="Group by">
+                        <div v-if="$route.name !== 'PMBoard'" style="display: inline-block; " >
+                            <label for="pet-select">View by:</label>
+                            <select v-model="groupBy" name="View by">
+                                <option value="team">Team</option>
+                                <option value="developer">Developer</option>
                                 <option value="assignee">Assignee</option>
-                                <option value="team" style="margin-right: 20px;">Team</option>
                             </select>
                         </div>
                         <!-- Sort By -->
@@ -25,10 +26,10 @@
                         <div v-if="getGroupBy == 'assignee'" style="margin-left: 30px;"  class="filter-button" >
                             <!-- Assigneer Filter -->
                             <div @click="openDropdown('assignees')">
-                                <span style="margin-right: 20px;">Select Assignees</span>
+                                <span style="margin-right: 20px;">Select {{getGroupBy}}</span>
                                 
                             </div>
-                            <div  style="min-width: 166px;" v-if="assigneesDropdown == true" class="dropdown">
+                            <div style="min-width: 166px;" v-if="assigneesDropdown == true" class="dropdown">
                                 <div>
                                     <div class="assignee">
                                         <span style="color: #757575;">All</span>
@@ -46,7 +47,7 @@
                     </span>
                 </div>
             </div>
-            <Workload :items="getItems()" />
+            <Workload :items="getItems()" :groupBy="getGroupBy"/>
         </div>
     </div>
 </template>
@@ -68,12 +69,14 @@ export default {
     },
     watch: {
         groupBy(n){
-            if(n == 'assignee' || n == 'team'){
+            if(n == 'assignee' || n == 'team' || n == 'developer'){
                 this.setGroupBy(n)
+                // this.sortIssues({items: this.getAllIssues, filters: {}, orderBy: n})
             }
         },
         sortBy(n){
             if(n == 'priority' || n == 'date'){
+                console.log('SORT_BY WATCH ', n)
                 this.applyFilter(n)
             }
         },
@@ -107,14 +110,15 @@ export default {
             hiddenAssignees:    'hiddenAssignees',
             getAssigneesList:   'getAssigneesList',
             getGroupBy:         'getGroupBy',
-            getSortedTeams:     'getSortedTeams'
+            getSortedTeams:     'getSortedTeams',
+            getMode:            'getMode'
         }),
         assignees: function() { return  this.assigneesList},
         functions: () => FUNCTIONS
     },
     data(){
         return {
-            groupBy:                'assignee',
+            groupBy:                'team',
             singleUpdate:           true,
             assigneesDropdown:      false,
             assigneesList:          [],
@@ -159,24 +163,23 @@ export default {
     },
     methods: {
         ...mapActions([
+            'setMode',
             'addAToBlacklist',
             'removeFromBlacklist',
             'sortIssues',
             'setGroupBy',
+            'fetchPmTasks',
+            'setPmTasks',
+            'setFilter'
         ]),
         getItems(){
-            console.log(this.getGroupBy)
-            console.log(this.functions.searchFilter(this.getSortedIssues, this.query))
-            console.log(this.getSortedTeams)
-            if(this.getGroupBy && this.getGroupBy == 'assignee'){
-                return this.functions.searchFilter(this.getSortedIssues, this.query)
-            }
-            if(this.getGroupBy && this.getGroupBy == 'team'){
-                return this.getSortedTeams
-            }
+            // console.log(this.functions.searchFilter(this.getSortedIssues, this.query, this.getGroupBy))
+            return this.functions.searchFilter(this.functions.sortedIssues(this.getAllIssues, this.getFilters ? this.getFilters : [], this.getGroupBy), this.query, this.getGroupBy)
         },
         applyFilter(filter){
-            this.sortIssues({items: this.getAllIssues, filters: {sortBy: filter}})
+            console.log("APPLY FILTER PASSING ", filter)
+            this.setFilter(filter)
+            // this.sortIssues({items: this.getAllIssues, filters: {sortBy: filter}, orderBy: this.groupBy})
         },
         closeDropdown(){
             this.assigneesDropdown = false
@@ -235,8 +238,11 @@ export default {
             }
         }
     },
+    mounted(){
+    },
     created(){
-        console.log(this.getSortedTeams)
+    },
+    destroyed(){
     }
 }
 </script>

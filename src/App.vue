@@ -17,7 +17,8 @@ export default {
     ...mapActions([
       'setBlacklist',
       'flushErrors',
-      'setGroupBy'
+      'setGroupBy',
+      'clearData'
     ])
   },
   created(){
@@ -34,7 +35,9 @@ export default {
       }
     }
     this.flushErrors()
-    this.setGroupBy('assignee')
+  },
+  destroyed(){
+    this.clearData()
   }
 }
 </script>
@@ -249,6 +252,8 @@ input {
     vertical-align: sub;
     width: 100px !important;
     display: inline-block;
+        text-align: center;
+
 }
 
 .btn {
