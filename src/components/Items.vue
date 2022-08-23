@@ -5,9 +5,9 @@
         </div>
         <div class="column-names">
             <div class="item">
-            <div style="width: 8%;" class="column">
+            <div style="width: 11%;" class="column">
                 <div :class="{active: ifActiveOption('Priority')}" @click="setFilter('Priority')"  class="priority-circle" :style="{backgroundColor: 'transparent'}"></div>
-                <a :class="{active: ifActiveOption('ID')}" @click="setFilter('ID')" style="display: inline-block;"> ID </a>
+                <a :class="{active: ifActiveOption('ID')}" @click="setFilter('ID')" style="display: inline-block;"> Key </a>
             </div>
             <div style="width: 29%; margin-right: 1%; max-width: 350px" class="column">
                 <a  :class="{active: ifActiveOption('Subject')}" @click="setFilter('Subject')">Subject</a>
@@ -21,7 +21,7 @@
             <div style="width: 7%;" class="column">
                 <a :class="{active: ifActiveOption('Tracker')}" @click="setFilter('Tracker')">Tracker</a>
             </div>
-            <div class="column">
+            <div style="width: 8%" class="column">
                 <a :class="{active: ifActiveOption('Status')}" @click="setFilter('Status')">Status</a>
             </div>
             <div class="column">
@@ -29,25 +29,27 @@
             </div>
             </div>
         </div>
-       <div v-for="(issue, index) in sortItems(functions.searchFilter(getAllIssues, query), filters[0])" :key="index">
+       <div v-for="(issue, index) in sortItems(functions.searchFilter(getAllIssues, query, 'assignee'), filters)" :key="index">
            <div class="item" >
-               <div style="width: 8%" class="column">
+                <div style="display: inline-block;vertical-align: -webkit-baseline-middle;">{{index+1}}</div>
+
+               <div style="width: 11%; whitespace: nowrap" class="column">
                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(issue.fields.priority.id).color}"></div>
-                   <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+issue.id"> {{issue.id}} </a>
+                   <a style="display: inline-block;" target="_blank" :href="'https://americor.atlassian.net/browse/'+issue.key"> {{issue.key}} </a>
                </div>
                 <div style="width: 29%; margin-right: 1%; max-width: 350px" class="column">
                    {{issue.fields.summary}}
                </div>
                <div class="column">
-                   {{issue.assignee ? issue.assignee.displayName : 'Unassigned'}}
+                   {{issue.fields.assignee ? issue.fields.assignee.displayName : 'Unassigned'}}
                </div>
                <div class="column">
-                   {{issue.fields.creator.displayName}}
+                   {{issue.fields.customfield10115 ? issue.fields.customfield10115.value : ''}}
                </div>
-               <!-- <div style="width: 7%" class="column">
-                   {{issue.tracker}}
-               </div> -->
-               <div class="column">
+               <div style="width: 7%" class="column">
+                   {{issue.fields.issuetype.name}}
+               </div>
+               <div style="width: 8%" class="column">
                    {{issue.fields.status.name}}
                </div>
                <div class="column">
@@ -73,35 +75,64 @@ export default {
     },
     data() {
         return {
-            filters: [
-                'ID'
-            ],
+            filters: [],
             query: ''
         }
     },
     methods: {
         sortItems(items, filterBy){
             var result = [...items]
-            if(filterBy == 'ID'){
-                return result.sort((a,b) => a.id > b.id)
+            if(filterBy[0] == 'ID'){
+                if(filterBy[1] == 'ID'){
+                    return result.sort((a,b) => parseInt(b.key.replace(/\D/g,'')) > parseInt(a.key.replace(/\D/g,'')))
+                }
+                return result.sort((a,b) => parseInt(a.key.replace(/\D/g,'')) > parseInt(b.key.replace(/\D/g,'')))
             }
-            if(filterBy == 'Subject'){
-                return result.sort((a,b) => a.subject.localeCompare(b.subject))
+            if(filterBy[0] == 'Subject'){
+                if(filterBy[1] == 'Subject'){
+                    return result.sort((a,b) => b.fields.summary.localeCompare(a.fields.summary))
+                }
+                return result.sort((a,b) => a.fields.summary.localeCompare(b.fields.summary))
             }
-            if(filterBy == 'Assignee'){
-                return result.sort((a,b) => a.firstName.localeCompare(b.firstName))
+            if(filterBy[0] == 'Assignee'){
+                if(filterBy[1] == 'Assignee'){
+                    return result.sort((a,b) => b.fields.assignee?.displayName.localeCompare(a.fields.assignee?.displayName))
+                }
+                return result.sort((a,b) => a.fields.assignee?.displayName.localeCompare(b.fields.assignee?.displayName))
             }
-            if(filterBy == 'Department'){
-                return result.sort((a,b) => a.permitDepartment.localeCompare(b.permitDepartment))
+            if(filterBy[0] == 'Department'){
+                if(filterBy[1] == 'Department'){
+                    return result.sort((a,b) => b.fields.customfield10115?.value.localeCompare(a.fields.customfield10115?.value))
+                }
+                return result.sort((a,b) => a.fields.customfield10115?.value.localeCompare(b.fields.customfield10115?.value))
             }
-            if(filterBy == 'Tracker'){
-                return result.sort((a,b) => a.tracker.localeCompare(b.tracker))
+            if(filterBy[0] == 'Tracker'){
+                if(filterBy[1] == 'Tracker'){
+                    return result.sort((a,b) => b.fields.issuetype.name.localeCompare(a.fields.issuetype.name))
+                }
+                return result.sort((a,b) => a.fields.issuetype.name.localeCompare(b.fields.issuetype.name))
             }
-            if(filterBy == 'Status'){
-                return result.sort((a,b) => a.status.localeCompare(b.status))
+            if(filterBy[0] == 'Status'){
+                if(filterBy[1] == 'Status'){
+                    return result.sort((a,b) => b.fields.status.name.localeCompare(a.fields.status.name))
+                }
+                return result.sort((a,b) => a.fields.status.name.localeCompare(b.fields.status.name))
             }
-            if(filterBy == 'Priority'){
-                return result.sort((a,b) => a.priority.localeCompare(b.priority))
+            if(filterBy[0] == 'Priority'){
+                if(filterBy[1] == 'Priority'){
+                    return result.sort((a,b) => parseInt(b.fields.priority.id) - parseInt(a.fields.priority.id))
+                }
+                return result.sort((a,b) => parseInt(a.fields.priority.id) - parseInt(b.fields.priority.id))
+            }
+            if(filterBy[0] == 'Date Created'){
+                if(filterBy[1] == 'Date Created'){
+                    return result.sort((a,b) => {
+                    return new Date(a.fields.created).getTime() - new Date(b.fields.created).getTime()
+                })
+                }
+                return result.sort((a,b) => {
+                    return new Date(b.fields.created).getTime() - new Date(a.fields.created).getTime()
+                })
             }
             if(result.length < 1){
                 return items
@@ -109,13 +140,48 @@ export default {
             return result
         },
         setFilter(option){
-            if(!this.filters.includes(option)){
-                this.filters = []
-                this.filters.push(option)
+            console.log('existing filters: ', this.filters)
+            console.log('option: ', option)
+            var dups = []
+            if(this.filters.length == 0){
+                this.filters.unshift(option)
+                console.log('adding option to empty array')
+            }
+            else if(this.filters.length <2){
+                for (var i = 0; i< this.filters.length; i++){
+                    if(this.filters[i] == option){
+                        dups.unshift(option)
+                    }
+                }
+                if(dups.length < 2) {
+                    console.log()
+                    this.filters.unshift(option)
+                }
+
+            }
+            else if (this.filters.length == 2){
+                for (var j = 0; j< this.filters.length; j++){
+                    if(this.filters[j] == option){
+                        dups.unshift(option)
+                    }
+                }
+                if(dups.length == 2) {
+                    this.filters.pop()
+                    // this.filters.unshift(option)
+                }
+                else {
+                     this.filters.pop()
+                    this.filters.unshift(option)
+                }
             }
             else {
-                this.filters.splice(this.filters.indexOf(option), 1)
-            }
+                    this.filters.pop()
+                    this.filters.unshift(option)
+                }
+            // else {
+            //     this.filters.pop()
+            // }
+            console.log("UPDATED FILTERS", this.filters, this.filters.length)
         },
         ifActiveOption(option){
             if(this.filters.includes(option)){
