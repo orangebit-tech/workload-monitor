@@ -2,6 +2,7 @@ import Vue                  from 'vue'
 import Vuex from 'vuex';
 import issues from './modules/issues.js'
 import createPersist from 'vuex-localstorage'
+import user from './modules/user.js'
 
 
 Vue.use(Vuex);
@@ -15,9 +16,9 @@ let localStorage = createPersist({
     // expires: 1.21e+9 // Two Weeks
 })
 
-
 export default new Vuex.Store({
     modules: {
+        user,
         issues
     },
     strict: debug,
