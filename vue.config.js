@@ -1,6 +1,13 @@
 module.exports = {
   // make resources be relative, app not working this way
   // publicPath: './',
+  configureWebpack: {
+    devServer: {
+      watchOptions: {
+        ignored: [/node_modules/, /public/],
+      }
+    }
+  }, 
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
     host: 'americor.gixcore.com',
