@@ -1,9 +1,7 @@
 <template>
     <div>
-       
         <div class="header">
             <Header class="wide"/>
-            <!-- <NavbarMob :buttons="buttons"/> -->
         </div>
         <fullscreen style="background-color: #F3F4F6; overflow-y: scroll; overflow-x: hidden" v-model="fullscreen">
         <div :style="[fullscreen ? {'margin-top': 0+'px'}:{}]" class="buttons">
@@ -18,21 +16,10 @@
                 <!-- TEXT -->
                 {{button.name}}
             </router-link>
-            
-            <!-- <a @click="test()">Test</a> -->
-            
             <a style="float: right; margin-right: 40px; cursor: pointer" type="button" :class="{'is-active': fullscreen}" class="button top-button" @click="toggle" >Fullscreen</a>
-            <!-- Api  -->
-            <!-- <button type="button" @click="toggleApi" >FullscreenApi</button> -->
-            <!-- Directive  -->
-            <!-- <button type="button" v-fullscreen >FullscreenDirective</button> -->
         </div>
-        <!-- <div class="display-block filters">
-            <span class="title-small">Filters</span>
-        </div> -->
         <div class="router-2">
             <router-view></router-view>
-          
         </div>
         </fullscreen>
     </div>
@@ -45,12 +32,10 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'Home',
     components: {
-        
         Header
     },
     watch: {
         timePeriod(n){
-            console.log('timeperiod v-model: ', n)
             this.setTimePeriod(this.convertTime(n, this.timeOoptions))
         }
     },
@@ -59,6 +44,7 @@ export default {
             'getIssuesLoading',
             'getTimePeriod',
             'getAllIssues',
+            'getEpics',
         ]),
         functions: () => FUNCTIONS
     },
@@ -133,11 +119,11 @@ export default {
         ...mapActions([
             'setTimePeriod',
             'fetchAllIssues',
-            'fetchPmTasks'
+            'fetchPmTasks',
+            'fetchEpics',
+            'loadData',
+            'resetLoadedModules'
         ]),
-        test(){
-            console.log('all issues: ', this.getAllIssues)
-        },
         toggle () {
             this.fullscreen = !this.fullscreen
         },
@@ -154,11 +140,11 @@ export default {
             return parseInt(result)
         }
     },
-    created(){
-         this.fetchAllIssues(this.getTimePeriod)
-         setTimeout(() => {
-            this.fetchPmTasks()
-         }, 300);
+    beforeMount(){
+        this.loadData(this.getTimePeriod)
+    },
+    destroyed(){
+        this.resetLoadedModules()
     }
 }
 </script>
@@ -176,10 +162,8 @@ text-align: right;
     height: 4.286rem;
     padding-left:30px;
     -webkit-box-shadow: 0 1px 4px 0 rgb(0 0 0 / 10%)
-    
 }
 .header {
-    /* background-color: #4773BA; */
     position: absolute;
     top:0px;
     right: 0px;
@@ -189,7 +173,6 @@ text-align: right;
     padding: 0px 20px;
     text-align: left;
     height: 4.286rem;
-   
 }
 .filters {
     height: 120px;
@@ -198,7 +181,6 @@ text-align: right;
     padding: 2%;
     padding-top: 1%;
     padding-left:20px;
-    
 }
 .title-small {
     color: #757575;
