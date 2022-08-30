@@ -63,6 +63,25 @@ export default {
   border: 1px solid #757575;
   border-radius: 2px !important;
 }
+.primary-column {
+  background-image: linear-gradient(to bottom,#4683c7,#3367a1) !important;
+  color: white !important;
+  overflow: hidden !important; 
+  position: relative !important; 
+  text-align: center !important;
+  padding-left: 0.8% !important;
+  padding-right: 0.8% !important;
+}
+.tasks-widget {
+      position: absolute;
+    bottom: 4%;
+    left:5%;
+    right:5%;
+}
+.tasks-widget span{
+  color: white !important;
+  
+}
 #app {
   overflow-x: hidden;
   font-family: 'Roboto',sans-serif;
@@ -120,7 +139,8 @@ a:hover {
 .is-active:hover {
 }
 .top-button {
-  line-height: 4.286rem;
+  line-height: 4.586rem;
+  
   color: #c8cccb;
 }
 .is-still-active {
