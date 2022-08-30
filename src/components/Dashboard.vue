@@ -46,6 +46,9 @@
                         </div>
                     </span>
                 </div>
+                <div style="float: right;margin-right: 15px;margin-top: 9px;" class="tasks-count">
+                    <span style="color: #757575"> Showing <span style="font-weight: bold; font-size: 16px; color: #4773BA">{{tasksCount}}</span> {{tasksCount == 1 ? 'task':'tasks'}}</span>
+                </div>
             </div>
             <Workload :items="getItems()" :groupBy="getGroupBy"/>
         </div>
@@ -71,12 +74,10 @@ export default {
         groupBy(n){
             if(n == 'assignee' || n == 'team' || n == 'developer'){
                 this.setGroupBy(n)
-                // this.sortIssues({items: this.getAllIssues, filters: {}, orderBy: n})
             }
         },
         sortBy(n){
             if(n == 'priority' || n == 'date'){
-                console.log('SORT_BY WATCH ', n)
                 this.applyFilter(n)
             }
         },
@@ -85,7 +86,6 @@ export default {
             this.setAll(this.assignees, n)        
         },
         assigneesList(n)  {
-            console.log('assignees list updated: ' + n)
             if(n.length >0){
                 n.map((a, index) => {
                     if(n[index] == false 
@@ -159,6 +159,7 @@ export default {
                     color: '#E0F0FF',
                 }
             ],
+            tasksCount: 0
         }
     },
     methods: {
@@ -166,20 +167,30 @@ export default {
             'setMode',
             'addAToBlacklist',
             'removeFromBlacklist',
-            'sortIssues',
             'setGroupBy',
             'fetchPmTasks',
-            'setPmTasks',
             'setFilter'
         ]),
         getItems(){
-            // console.log(this.functions.searchFilter(this.getSortedIssues, this.query, this.getGroupBy))
-            return this.functions.searchFilter(this.functions.sortedIssues(this.getAllIssues, this.getFilters ? this.getFilters : [], this.getGroupBy), this.query, this.getGroupBy)
+            var items = this.functions.searchFilter(this.functions.sortedIssues(this.getAllIssues, this.getFilters ? this.getFilters : [], this.getGroupBy), this.query, this.getGroupBy)
+            var keys = Object.keys(items)
+            var length = 0
+            for(var i = 0; i< keys.length; i++){
+                var item = items[keys[i]]
+                if(item){
+                    var statuses = Object.keys(item)
+                    for(var j = 0; j< statuses.length; j++){
+                        if(item[statuses[j]] && item[statuses[j]].length > 0){
+                            length = length + item[statuses[j]].length
+                        }
+                    }
+                }
+            }
+            this.tasksCount = length
+            return items
         },
         applyFilter(filter){
-            console.log("APPLY FILTER PASSING ", filter)
             this.setFilter(filter)
-            // this.sortIssues({items: this.getAllIssues, filters: {sortBy: filter}, orderBy: this.groupBy})
         },
         closeDropdown(){
             this.assigneesDropdown = false
@@ -221,7 +232,6 @@ export default {
             this.refreshAssigneesList()
         },
         refreshAssigneesList(){
-            console.log('refreshing assignees')
             if(this.getSortedIssues){
                 var assignees = this.getAssigneesList
                 assignees.map((a, index) => {
@@ -247,7 +257,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .filter-button {
     display: inline-block;
     background-color: #fff;
@@ -269,8 +279,8 @@ export default {
 }
 select {
     border-radius: 0.215rem;
-    padding-left: 1.072em;
-    padding-right: 1.072em;
+    padding-left: 0.7em !important;
+    padding-right: 0.7em !important;
     height: 36px !important;
     font-size: 1rem;
     -webkit-box-shadow: 0 1px 4px 0 rgb(0 0 0 / 10%)
@@ -349,6 +359,14 @@ img {
 span {
     color: #4773BA;
 }
+.item .inner-block {
+    vertical-align: top;
+    width: 200px;
+    display: inline-block;
+    padding: 15px;
+}
+</style>
+<style scoped>
 .item {
     padding: 5px;
     display: block;
@@ -357,11 +375,5 @@ span {
     border-radius: 8px;
     text-align: left;
     padding-left: 15px;
-}
-.item .inner-block {
-    vertical-align: top;
-    width: 200px;
-    display: inline-block;
-    padding: 15px;
 }
 </style>
