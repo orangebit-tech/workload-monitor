@@ -13,9 +13,6 @@
                 </div>
                 <div v-if="getError && getError !== ''" id="email-error" class="alert alert-error form-row-alert">{{getError}}</div>
             </div>                
-            <!-- <div class="text-center forgot-password">
-                <a href="https://client.americor.com/auth/reset/email" class="hover:underline" onclick="sendAmplitudeEvent('Tap reset password button');">Forgot Password <span class="icon-chevron blue"></span></a>
-            </div> -->
             <div style="" class="text-center mt-6">
                 <button type="submit" class="uk-button uk-button-default uk-button-large">Continue <span class="icon-chevron icon-chevron-white"></span></button>
             </div>
@@ -34,20 +31,14 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getToken',
-            'getLoggedIn',
             'getError'
         ])
     },
     methods: {
         ...mapActions([
             'setToken',
-            'setLoggedIn',
             'flushErrors'
         ]),
-        show(){
-            console.log(this.$store)
-        }
     },
     destroyed(){
         this.flushErrors()

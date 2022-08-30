@@ -80,7 +80,6 @@ export const router = new VueRouter({
     routes
 })
 router.beforeEach((to, from, next) => {
-    console.log('LOCALSTORAGE ', localStorage)
     store.commit('SET_ROUTE', to);
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // Route requires auth, check if user is logged in
@@ -103,10 +102,8 @@ router.beforeEach((to, from, next) => {
                 // store.dispatch('setToken', localStorage.j_token)
                 if(to && to.name == 'PMBoard'){
                     store.dispatch('setGroupBy', 'pm')
-                    console.log("ROUTER GROUP BY IF PM")
                 }
                 else {
-                    console.log("ROUTER GROUP BY ELSE")
                     store.dispatch('setGroupBy', 'team')
                 }
                 console.log('valid token')
@@ -125,10 +122,10 @@ router.beforeEach((to, from, next) => {
     else {
         if(to && to.name == 'PMBoard'){
             store.dispatch('setGroupBy', 'pm')
-            console.log("ROUTER GROUP BY IF PM")
+            // console.log("ROUTER GROUP BY IF PM")
         }
         else {
-            console.log("ROUTER GROUP BY ELSE")
+            // console.log("ROUTER GROUP BY ELSE")
             store.dispatch('setGroupBy', 'team')
         }
         next();
