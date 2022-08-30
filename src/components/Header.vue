@@ -3,8 +3,8 @@
         <div>
             <!-- <div :style="{backgroundImage: 'url(' + logoUrl.sample + ')'}" class="image">
             </div> -->
-            <img class="image" :src="logoUrl.sample">
-            <a @click="logout()" class="btn btn-light js-menu-log-in-btn">Log Out</a>
+            <img class="image" :src="'https://test.americor.biz/images/logo-white.svg'">
+            <a style="margin-top: 16px;" @click="logout()" class="btn btn-light js-menu-log-in-btn">Log Out</a>
         </div>
     </div>
 </template>
@@ -27,7 +27,8 @@ export default {
 </script>
 <style scoped>
 .image {
-    height: 20px;
+    height: 47px;
+        display: inline-block;
 }
 a {
     float: right;
