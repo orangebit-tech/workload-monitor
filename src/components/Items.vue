@@ -2,6 +2,22 @@
     <div v-if="!getIssuesLoading" class="display-block items-widget">
         <div class="filters">
             <input placeholder="Search" v-model="query" class="filter-option" />
+            <div class="filter-options">
+                <span v-click-outside="closeDropdown" class="filter-option">
+                    <!-- Sort By -->
+                    <div style="display: inline-block; " >
+                        <label style="margin-left: 30px;" for="pet-select">Show:</label>
+                        <select v-model="mode" name="Sort by">
+                            <option value="">All</option>
+                            <option value="active" style="margin-right: 20px;">Active only</option>
+                            <option value="pm" style="margin-right: 20px;">Active with missing target/due dates</option>
+                        </select>
+                    </div>
+                </span>
+            </div>
+            <div style="float: right;margin-right: 15px;" class="tasks-count">
+                <span style="color: #757575"> Showing <span style="font-weight: bold; font-size: 16px; color: #4773BA">{{tasksCount}}</span> {{tasksCount == 1 ? 'task':'tasks'}}</span>
+            </div>
         </div>
         <div class="column-names">
             <div class="item">
@@ -13,13 +29,10 @@
                 <a  :class="{active: ifActiveOption('Subject')}" @click="setFilter('Subject')">Subject</a>
             </div>
             <div class="column">
-                <a :class="{active: ifActiveOption('Assignee')}" @click="setFilter('Assignee')">Assignee</a>
-            </div>
-            <div class="column">
-                <a :class="{active: ifActiveOption('Assignee')}" @click="setFilter('Department')">Department</a>
+                <a :class="{active: ifActiveOption('Project Manager')}" @click="setFilter('Project Manager')">Project Manager</a>
             </div>
             <div style="width: 7%;" class="column">
-                <a :class="{active: ifActiveOption('Tracker')}" @click="setFilter('Tracker')">Tracker</a>
+                <a :class="{active: ifActiveOption('Task Type')}" @click="setFilter('Task Type')">Task Type</a>
             </div>
             <div style="width: 8%" class="column">
                 <a :class="{active: ifActiveOption('Status')}" @click="setFilter('Status')">Status</a>
@@ -27,9 +40,15 @@
             <div class="column">
                 <a :class="{active: ifActiveOption('Date Created')}" @click="setFilter('Date Created')">Date Created</a>
             </div>
+            <div class="column">
+                <a :class="{active: ifActiveOption('Target Start')}" @click="setFilter('Target Start')">Target Start</a>
+            </div>
+            <div class="column">
+                <a :class="{active: ifActiveOption('Due Date')}" @click="setFilter('Due Date')">Due Date</a>
+            </div>
             </div>
         </div>
-       <div v-for="(issue, index) in sortItems(functions.searchFilter(getAllIssues, query, 'assignee'), filters)" :key="index">
+       <div v-for="(issue, index) in sortForPM(sortItems(functions.searchFilter(getAllIssues, query, 'pm'), filters), mode)" :key="index">
            <div class="item" >
                 <div style="display: inline-block;vertical-align: -webkit-baseline-middle;">{{index+1}}</div>
 
@@ -41,10 +60,7 @@
                    {{issue.fields.summary}}
                </div>
                <div class="column">
-                   {{issue.fields.assignee ? issue.fields.assignee.displayName : 'Unassigned'}}
-               </div>
-               <div class="column">
-                   {{issue.fields.customfield10115 ? issue.fields.customfield10115.value : ''}}
+                   {{issue.fields.customfield_10106 ? issue.fields.customfield_10106.displayName : 'Unassigned'}}
                </div>
                <div style="width: 7%" class="column">
                    {{issue.fields.issuetype.name}}
@@ -53,7 +69,15 @@
                    {{issue.fields.status.name}}
                </div>
                <div class="column">
-                   {{functions.howLongAgo(issue.fields.created)}}
+                   {{issue.fields.created}}
+               </div>
+               <!-- TARGET -->
+               <div class="column">
+                   {{issue.fields.customfield_10117 ? issue.fields.customfield_10117 : '-'}}
+               </div>
+               <!-- Due Date -->
+               <div class="column">
+                   {{issue.fields.duedate ? issue.fields.duedate : '-'}}
                </div>
            </div>
        </div>
@@ -76,7 +100,9 @@ export default {
     data() {
         return {
             filters: [],
-            query: ''
+            query: '',
+            mode: '',
+            tasksCount: 0
         }
     },
     methods: {
@@ -94,11 +120,11 @@ export default {
                 }
                 return result.sort((a,b) => a.fields.summary.localeCompare(b.fields.summary))
             }
-            if(filterBy[0] == 'Assignee'){
-                if(filterBy[1] == 'Assignee'){
-                    return result.sort((a,b) => b.fields.assignee?.displayName.localeCompare(a.fields.assignee?.displayName))
+            if(filterBy[0] == 'Project Manager'){
+                if(filterBy[1] == 'Project Manager'){
+                    return result.sort((a,b) => b.fields.customfield_10106?.displayName.localeCompare(a.fields.customfield_10106?.displayName))
                 }
-                return result.sort((a,b) => a.fields.assignee?.displayName.localeCompare(b.fields.assignee?.displayName))
+                return result.sort((a,b) => a.fields.customfield_10106?.displayName.localeCompare(b.fields.customfield_10106?.displayName))
             }
             if(filterBy[0] == 'Department'){
                 if(filterBy[1] == 'Department'){
@@ -106,8 +132,8 @@ export default {
                 }
                 return result.sort((a,b) => a.fields.customfield10115?.value.localeCompare(b.fields.customfield10115?.value))
             }
-            if(filterBy[0] == 'Tracker'){
-                if(filterBy[1] == 'Tracker'){
+            if(filterBy[0] == 'Task Type'){
+                if(filterBy[1] == 'Task Type'){
                     return result.sort((a,b) => b.fields.issuetype.name.localeCompare(a.fields.issuetype.name))
                 }
                 return result.sort((a,b) => a.fields.issuetype.name.localeCompare(b.fields.issuetype.name))
@@ -134,18 +160,70 @@ export default {
                     return new Date(b.fields.created).getTime() - new Date(a.fields.created).getTime()
                 })
             }
+            if(filterBy[0] == 'Target Start'){
+                if(filterBy[1] == 'Target Start'){
+                    return result.sort((a,b) => {
+                    return new Date(a.fields.customfield_10117).getTime() - new Date(b.fields.customfield_10117).getTime()
+                })
+                }
+                return result.sort((a,b) => {
+                    return new Date(b.fields.customfield_10117).getTime() - new Date(a.fields.customfield_10117).getTime()
+                })
+            }
+            if(filterBy[0] == 'Due Date'){
+                if(filterBy[1] == 'Due Date'){
+                    return result.sort((a,b) => {
+                    return new Date(a.fields.duedate).getTime() - new Date(b.fields.duedate).getTime()
+                })
+                }
+                return result.sort((a,b) => {
+                    return new Date(b.fields.duedate).getTime() - new Date(a.fields.duedate).getTime()
+                })
+            }
             if(result.length < 1){
                 return items
             }
             return result
         },
+        sortForPM(items, mode){
+            var result = []
+            var statusesBlackList = [
+                'backlog',
+                'done',
+                'tech review',
+                'to document'
+            ]
+            var localItems = [...items]
+            if(localItems && mode == 'pm'){
+                localItems.map(task => {
+                    if((!task.fields.customfield_10117 || !task.fields.duedate) && !statusesBlackList.includes(task.fields.status.name.toLowerCase())){
+                        if(!result.includes(task)){
+                            result.push(task)
+                        }
+                       
+                    }
+                })
+            }
+            if(localItems && mode == 'active'){
+                localItems.map(task => {
+                    if(!statusesBlackList.includes(task.fields.status.name.toLowerCase())){
+                        if(!result.includes(task)){
+                            result.push(task)
+                        }
+                       
+                    }
+                })
+            }
+            else {
+                result = items
+            }
+            this.tasksCount = result.length
+            return result
+        },
         setFilter(option){
-            console.log('existing filters: ', this.filters)
-            console.log('option: ', option)
             var dups = []
             if(this.filters.length == 0){
                 this.filters.unshift(option)
-                console.log('adding option to empty array')
             }
             else if(this.filters.length <2){
                 for (var i = 0; i< this.filters.length; i++){
@@ -154,10 +232,8 @@ export default {
                     }
                 }
                 if(dups.length < 2) {
-                    console.log()
                     this.filters.unshift(option)
                 }
-
             }
             else if (this.filters.length == 2){
                 for (var j = 0; j< this.filters.length; j++){
@@ -167,7 +243,6 @@ export default {
                 }
                 if(dups.length == 2) {
                     this.filters.pop()
-                    // this.filters.unshift(option)
                 }
                 else {
                      this.filters.pop()
@@ -178,10 +253,6 @@ export default {
                     this.filters.pop()
                     this.filters.unshift(option)
                 }
-            // else {
-            //     this.filters.pop()
-            // }
-            console.log("UPDATED FILTERS", this.filters, this.filters.length)
         },
         ifActiveOption(option){
             if(this.filters.includes(option)){
@@ -194,7 +265,6 @@ export default {
         ...mapGetters([
             'getIssuesLoading',
             'getAllIssues',
-            'getSortedIssues'
         ]),
         functions: () => FUNCTIONS
     }
@@ -204,7 +274,8 @@ export default {
 <style>
 .filters {
     text-align: left;
-    padding: 18px 0px;
+    padding: 20px 0px;
+    padding-top: 6px;
 }
 .filters input {
     border: 1px solid #dedfe0;
@@ -230,7 +301,6 @@ input:focus {
 .item {
     text-align: left;
     border: 1px solid #F6FBFE;
-    margin-bottom: 16px;
     min-height: 32px;
 }
 .priority-circle {
@@ -252,6 +322,9 @@ input:focus {
 }
 .item {
     font-size: 14px;
+    background-color: white;
+    border-radius: 3px;
+    padding-left: 15px;
 }
 .column {
     width: 10%;
@@ -268,6 +341,7 @@ input:focus {
 <style scoped>
 .column {
     padding-top: 7px;
+    padding-bottom: 7px;
     width: 10%;
     display: inline-block;
     border-right: 1px solid #F6FBFE;
