@@ -2,18 +2,76 @@
     <div v-if="!getIssuesLoading">
         <div v-if="items && $route.name == 'Dashboard'">
             <div v-for="(item, index) in Object.keys(items).sort((a, b) => a.localeCompare(b))" :key="index" class="list-row">
-                <div style="overflow: hidden; position: relative; text-align: center; width: 11.5%;" class="column ">
+                <div class="column primary-column">
+                    <!-- <div class="ava">
+                        <img :src="" alt="">
+                    </div> -->
                     <div class="name">
                         {{item}}
                     </div>
                     <div v-if="getGroupBy == 'team'" class="occupation">
                         {{getOccupation(item)}}
                     </div>
-                    <div>
-                        <span style="">Tasks </span> <span style="color: #4773BA; font-weight: 600; text-decoration: underline;">{{functions.countTasks(items[item])}}</span> 
+                    <div class="tasks-widget">
+                        <div style="text-align: left; margin-bottom: 5px;">
+                            <span style="font-weight: bold">Tasks</span> <span style="font-weight: 600; float: right;">{{functions.countTasks(items[item]).total}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(1).color}"></div>
+                            <span>Highest</span> <span style="float: right;">{{functions.countTasks(items[item]).highest}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(2).color}"></div>
+                            <span>High</span> <span style="float: right;">{{functions.countTasks(items[item]).high}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(3).color}"></div>
+                            <span>Medium</span> <span style="float: right;">{{functions.countTasks(items[item]).medium}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(4).color}"></div>
+                            <span>Low</span> <span style="float: right;">{{functions.countTasks(items[item]).low}}</span> 
+                        </div>
+
                     </div>
-                    <span class="hide-button" style="position: absolute; left: 15px; bottom: 15px;" @click="addToBlacklistLocal({name: item, skipRefresh: 'false'})">Hide</span>
+                    <!-- <span class="hide-button" style="position: absolute; left: 15px; bottom: 15px;" @click="addToBlacklistLocal({name: item, skipRefresh: 'false'})">Hide</span> -->
                 </div>
+                <!-- BACKLOG -->
+                <!-- <div class="column">
+                    <div class="title" style="text-align: center">Backlog <span class="number">{{items[item]['backlog'] ? items[item]['backlog'].length : 0}}</span></div>
+                    <div class="tasks">
+                        <div class="task" v-for="(task, index) in items[item]['backlog']" :key="index+item">
+                            <div style="display: flex;">
+                                <div style="display: inline-block; width: 20px;">
+                                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                                    <span style="float: right;margin-right: 10px; color: #4773BA" class="task-type">{{task.taskType}}</span>
+                                </div>
+                                <div class="subject">
+                                    <span style="display: inline-block;"> 
+                                        <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
+                                        <div v-if="task.fields.parent">
+                                            <span style="font-weight: bold;">Epic: </span>
+                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
+                                        </div>
+                                    </span> 
+                                    <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
+                                </div>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar bg-succsess"
+                                    role="progressbar"
+                                    :style="{ width: 0}"
+                                    aria-valiemin="0"
+                                    style="border-radius: 0px 6px 6px 0px;"
+                                    aria-valuemax="100"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- Tech Review -->
                 <div class="column">
                     <div class="title" style="text-align: center">Tech Review <span class="number">{{items[item]['tech review'] ? items[item]['tech review'].length : 0}}</span></div>
                     <div class="tasks">
@@ -53,6 +111,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Development Plan -->
                 <div style="text-align: left;" class="column">
                     <div class="title" style="text-align: center">Development Plan <span class="number">{{items[item]['development plan'] ? items[item]['development plan'].length : 0}}</span></div>
                     <div class="tasks">
@@ -76,6 +135,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- In Development -->
                 <div class="column">
                     <div class="title" style="text-align: center">In Development <span class="number">{{items[item]['in development'] ? items[item]['in development'].length : 0}}</span></div>
                     <div class="tasks">
@@ -110,6 +170,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Paused -->
                 <div class="column">
                     <div class="title" style="text-align: center">Paused <span class="number">{{items[item]['paused'] ? items[item]['paused'].length : 0}}</span></div>
                     <div class="tasks">
@@ -144,6 +205,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Code Review -->
                 <div class="column">
                     <div class="title" style="text-align: center">Code Review <span class="number">{{items[item]['code review'] ? items[item]['code review'].length : 0}}</span></div>
                     <div class="tasks">
@@ -178,6 +240,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Testing -->
                 <div class="column">
                     <div class="title" style="text-align: center">Testing <span class="number">{{items[item]['testing'] ? items[item]['testing'].length : 0}}</span></div>
                     <div class="tasks">
@@ -216,14 +279,33 @@
         </div>
         <div v-if="items && $route.name == 'PMBoard'">
             <div v-for="(item, index) in Object.keys(items).sort((a, b) => a.localeCompare(b))" :key="index" class="list-row">
-                <div style="overflow: hidden; position: relative; text-align: center; width: 11.5%;" class="column ">
+                <div class="column primary-column">
                     <div class="name">
                         {{item}}
                     </div>
-                    <div>
-                        <span style="">Tasks </span> <span style="color: #4773BA; font-weight: 600; text-decoration: underline;">{{functions.countTasks(items[item])}}</span> 
+                    <div class="tasks-widget">
+                        <div style="text-align: left; margin-bottom: 5px;">
+                            <span style="font-weight: bold">Tasks</span> <span style="font-weight: 600; float: right;">{{functions.countTasks(items[item]).total}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(1).color}"></div>
+                            <span>Highest</span> <span style="float: right;">{{functions.countTasks(items[item]).highest}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(2).color}"></div>
+                            <span>High</span> <span style="float: right;">{{functions.countTasks(items[item]).high}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(3).color}"></div>
+                            <span>Medium</span> <span style="float: right;">{{functions.countTasks(items[item]).medium}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(4).color}"></div>
+                            <span>Low</span> <span style="float: right;">{{functions.countTasks(items[item]).low}}</span> 
+                        </div>
+
                     </div>
-                    <span class="hide-button" style="position: absolute; left: 15px; bottom: 15px;" @click="addToBlacklistLocal({name: item, skipRefresh: 'false'})">Hide</span>
+                    <!-- <span class="hide-button" style="position: absolute; left: 15px; bottom: 15px;" @click="addToBlacklistLocal({name: item, skipRefresh: 'false'})">Hide</span> -->
                 </div>
                 <!-- BACKLOG -->
                 <div class="column">
@@ -446,17 +528,13 @@ export default {
     computed: {
         ...mapGetters([
             'getGroupBy',
-            'getAssigneesList',
-            'getAllIssues',
             'getIssuesLoading',
-            'getRoute'
         ]),
         functions: () => FUNCTIONS
     },
     methods: {
         ...mapActions([
             'addAToBlacklist',
-            'setGroupBy',
         ]),
         viewTask(task){
             console.log(task)
@@ -479,7 +557,6 @@ export default {
             this.$forceUpdate()
         },
         getOccupation(team){
-            console.log("GOT TEAM ", team)
             if(team.toLowerCase() == 'damdinov team'){
                 return '(Debt Settlement / Payments)'
             }
@@ -491,11 +568,6 @@ export default {
             }
         }
     },
-    updated(){
-        console.log('UPDATED')
-    },
-    created(){
-    }
 }
 </script>
 
@@ -516,7 +588,7 @@ h1 {
   border: 1px solid #DDDDDD;
 }
 .title {
-    color: #757575;
+    color: #4683c7;
     font-weight: bold;
     font-size: 14px;
     height: 33px;
@@ -534,7 +606,7 @@ h1 {
     vertical-align: top;
     display: inline-block;
     margin-right: 0.8%;
-    width: 12.5%;
+    width: 100%;
     height: 200px;
     max-height: 200px;
     overflow: scroll;
@@ -551,15 +623,16 @@ h1 {
 .list-row {
     text-align: center;
     min-height: 100px;
-    padding: 1% 1%;
     border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    margin-top: 5px;
 }
 .name {
-    font-size: 22px;
-    margin-bottom: 10px;
-    padding-top: 10px;
-    /* color: #4773ba; */
-    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 2px;
+    padding-top: 13px;
 }
 .tasks {
     color: #757575;
@@ -580,11 +653,8 @@ h1 {
     display: inline-block;
     vertical-align: -webkit-baseline-middle;
 }
-.occupation {
-    margin-bottom: 25px;
-}
+
 .subject {
-   
     margin-top: 4px;
     margin-bottom: 2px;
     display: inline-block;
@@ -601,8 +671,8 @@ h1 {
     background-color: #EBEAEA;
 }
 a {
-        text-decoration: none;
-        color: #757575;
+    text-decoration: none;
+    color: #757575;
 }
 a:hover {
     color: #4773BA;
