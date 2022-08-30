@@ -1,29 +1,8 @@
 <template>
-    <div v-if="!getIssuesLoading" class="items-widget">
-       <div v-for="(customer, index) in getDepartments" :key="index">
-           <div class="item" >
-               {{customer}}
-               <!-- <div class="column">
-                   <div class="priority-circle" :style="{backgroundColor: functions.getPriority(issue.priority).color}"></div>
-                   <a style="display: inline-block;" target="_blank" :href="'https://redmine.maintstar.co/issues/'+issue.id"> {{issue.id}} </a>
-               </div>
-                <div style="width: 350px; margin-right: 15px;" class="column">
-                   {{issue.subject}}
-               </div>
-               <div class="column">
-                   {{issue.firstName}} {{issue.lastName[0]}}
-               </div>
-               <div class="column">
-                   {{issue.tracker}}
-               </div>
-               <div class="column">
-                   {{issue.status}}
-               </div>
-               <div class="column">
-                   {{howLongAgo(issue.created_on)}}
-               </div> -->
-           </div>
-       </div>
+    <div v-if="getEpicsLoaded == true" class="items-widget">
+        <div class="container1">
+            <gantt class="left-container"></gantt>
+        </div>
     </div>
     <div v-else>
         <Spinner />
@@ -31,28 +10,37 @@
 </template>
 
 <script>
-import {mapGetters}     from 'vuex'
+import {mapGetters, mapActions}     from 'vuex'
 import Spinner from './partials/Spinner.vue'
 import FUNCTIONS        from '../functions.js'
+import Gantt        from './partials/Gantt.vue'
 
 export default {
     name: 'Departments',
     components: {
-        Spinner
+        Spinner,
+        Gantt
     },
+    
     data(){
         return {
-            
+
         }
     },
     computed: {
         ...mapGetters([
             'getDepartments',
-            'getIssuesLoading'
+            'getEpicsLoaded',
+            'getAllIssues',
+            'getEpics',
+            'getAllModulesLoaded'
         ]),
-        functions: () => FUNCTIONS
+        functions: () => FUNCTIONS,
     },
     methods: {
+        ...mapActions([
+            'fetchEpics'
+        ]),
         filterItems(items){
             var result = []
             if(result.length < 1){
@@ -60,6 +48,30 @@ export default {
             }
             return result
         },
-    }
+    },
 }
 </script>
+
+<style scoped>
+  .container1 {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 33px;
+  }
+
+  .left-container {
+    overflow: hidden;
+    position: relative;
+    position: fixed;
+    left: 2.5%;
+    right: 2.5%;
+    bottom: 0px;
+    top: 130px;
+  }
+</style>
+<style>
+.gantt_layout_cell {
+
+}
+</style>
