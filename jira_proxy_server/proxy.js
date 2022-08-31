@@ -1,29 +1,29 @@
 
 require('dotenv').config()
-var https = require("https");
-var fs = require("fs");
-var path = require("path");
-var certificatePath = path.resolve(__dirname, "/etc/letsencrypt/live/a3i3.dev/");
-var privateKey = fs.readFileSync(certificatePath + "/privkey.pem");
-var certificate = fs.readFileSync(certificatePath + "/fullchain.pem");
-var credentials = {key: privateKey, cert: certificate};
-const express = require('express');
-const app = express();
-var cors = require('cors')
-const axios = require('axios')
-var data = null
-var jira = null
-var pmJira = null
-var epics = null
+var https =                 require("https");
+var fs =                    require("fs");
+var path =                  require("path");
+var certificatePath =       path.resolve(__dirname,             process.env.VUE_APP_KEY_PAIR_PATH);
+var privateKey =            fs.readFileSync(certificatePath +   process.env.VUE_APP_HTTPS_PRIV_KEY);
+var certificate =           fs.readFileSync(certificatePath +   process.env.VUE_APP_HTTPS_CERT);
+var credentials =           {key: privateKey, cert: certificate};
+const express =             require('express');
+const app =                 express();
+var cors =                  require('cors')
+const axios =               require('axios')
+
+var jira =                  null
+var pmJira =                null
+var epics =                 null
 app.use(cors())
 
 async function fetchJira(){
     var totalIssues = []
     var maxResults = 100
     // ALL FIELDS
-    // var url = 'https://americor.atlassian.net/rest/api/3/search?maxResults='+maxResults+'&filter=-4&jql=project%20%3D%20CRM%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC';
+    // var url = process.env.VUE_APP_JIRA_HOST+ 'search?maxResults='+maxResults+'&filter=-4&jql=project%20%3D%20CRM%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC';
     // STABLE
-    var url = 'https://americor.atlassian.net/rest/api/3/search?maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10145,customfield_10117,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC';
+    var url = process.env.VUE_APP_JIRA_HOST+ 'search?maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10145,customfield_10117,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC';
     const response = await axios( {
         url: url, 
         method: 'get',
@@ -60,7 +60,7 @@ async function fetchJira(){
                 console.log('lap ', i ,' started ', ' start at updated ', startAt)
                 await axios( {
                     // STABLE
-                    url: 'https://americor.atlassian.net/rest/api/3/search?startAt='+startAt+'&maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC',
+                    url: process.env.VUE_APP_JIRA_HOST+ 'search?startAt='+startAt+'&maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC',
                     method: 'get',
                     mode: 'no-cors',
                     headers: {
@@ -105,7 +105,7 @@ async function fetchPMTasks(){
     var totalPmIssues = []
     var maxResults = 100
     // STABLE
-    var url = 'https://americor.atlassian.net/rest/api/3/search?maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(Backlog%2C%20Done%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22)%20order%20by%20created%20DESC';
+    var url = process.env.VUE_APP_JIRA_HOST+ 'search?maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(Backlog%2C%20Done%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22)%20order%20by%20created%20DESC';
     const response = await axios( {
         url: url, 
         method: 'get',
@@ -139,8 +139,8 @@ async function fetchPMTasks(){
             for(var i = 0; i<= laps; i++){
                 startAt = startAt + max
                 await axios( {
-                    url: 'https://americor.atlassian.net/rest/api/3/search?startAt='+startAt+'&maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(Backlog%2C%20Done%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22)%20order%20by%20created%20DESC',
-                    // url: 'https://americor.atlassian.net/rest/api/3/search?startAt='+startAt+'&maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20AND%20created%20%3E%3D%202021-08-06%20AND%20created%20%3C%3D%202022-08-06%20ORDER%20BY%20assignee%20ASC%2C%20created%20DESC', 
+                    url: process.env.VUE_APP_JIRA_HOST + 'search?startAt='+startAt+'&maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(Backlog%2C%20Done%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22)%20order%20by%20created%20DESC',
+                    // url: process.env.VUE_APP_JIRA_HOST+ 'search?startAt='+startAt+'&maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20AND%20created%20%3E%3D%202021-08-06%20AND%20created%20%3C%3D%202022-08-06%20ORDER%20BY%20assignee%20ASC%2C%20created%20DESC', 
                     method: 'get',
                     mode: 'no-cors',
                     headers: {
@@ -184,12 +184,11 @@ async function fetchPMTasks(){
     return pmJira
 }
 async function fetchEpics(){
-    var totalIssues = []
     var maxResults = 100
     // ALL FIELDS
-    // var url = 'https://americor.atlassian.net/rest/api/3/search?maxResults='+maxResults+'&filter=-4&jql=project%20%3D%20CRM%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC';
+    // var url = process.env.VUE_APP_JIRA_HOST+ 'search?maxResults='+maxResults+'&filter=-4&jql=project%20%3D%20CRM%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC';
     // STABLE
-    var url = 'https://americor.atlassian.net/rest/api/3/search?maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10105,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20%3D%20Epic%20AND%20status%20in%20(Backlog%2C%20Closed%2C%20%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22Documentation%20Finished%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22Tech%20Review%22%2C%20Testing%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22%2C%20%22Writing%20Documentation%22)%20order%20by%20created%20DESC';
+    var url = process.env.VUE_APP_JIRA_HOST+ 'search?maxResults='+maxResults+'&filter=-4&fields=id,key,parent,status,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10105,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20%3D%20Epic%20AND%20status%20in%20(Backlog%2C%20Closed%2C%20%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22Documentation%20Finished%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22Tech%20Review%22%2C%20Testing%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22%2C%20%22Writing%20Documentation%22)%20order%20by%20created%20DESC';
     const response = await axios( {
         url: url, 
         method: 'get',
@@ -271,10 +270,10 @@ app.get('/jira/epics', async(req, res) => {
     }
 });
   
-app.listen(8000, () => {
-console.log('listening on port 8000')
+app.listen(process.env.VUE_APP_HTTP_PORT, () => {
+console.log('listening on port '+ process.env.VUE_APP_HTTP_PORT)
 });
 var httpsServer = https.createServer(credentials, app);
-httpsServer.listen(8443, function() {
- console.log("Appted on port 8443");
+httpsServer.listen(process.env.VUE_APP_HTTPS_PORT, function() {
+ console.log('Appted on port ' + process.env.VUE_APP_HTTPS_PORT);
 });
