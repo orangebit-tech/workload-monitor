@@ -103,6 +103,11 @@ export default {
                     icon: 'ViewCompact'
                 },
                 {
+                    name: 'Roadmap',
+                    url: '/home/roadmap',
+                    icon: 'ViewCompact'
+                },
+                {
                     name: 'Tasks',
                     url: '/home/items',
                     icon: 'ClipboardCheck'
