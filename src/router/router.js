@@ -4,7 +4,7 @@ import App              from '../App.vue'
 import Home             from '../components/Home'
 import Settings         from '../components/Settings'
 import Dashboard        from '../components/Dashboard'
-import Departments      from '../components/Departments'
+import Roadmap          from '../components/Roadmap'
 import Items            from '../components/Items'
 import store            from '../store'
 import Login            from '../components/Login.vue'
@@ -55,7 +55,14 @@ export const routes = [
                     {
                         path: "/home/departments",
                         name: "Departments",
-                        component: Departments,
+                        component: Dashboard,
+                        children: [
+                        ]
+                    },
+                    {
+                        path: "/home/roadmap",
+                        name: "Roadmap",
+                        component: Roadmap,
                         children: [
                         ]
                     },
@@ -102,6 +109,9 @@ router.beforeEach((to, from, next) => {
                 // store.dispatch('setToken', localStorage.j_token)
                 if(to && to.name == 'PMBoard'){
                     store.dispatch('setGroupBy', 'pm')
+                }
+                if(to && to.name == 'Departments'){
+                    store.dispatch('setGroupBy', 'department')
                 }
                 else {
                     store.dispatch('setGroupBy', 'team')

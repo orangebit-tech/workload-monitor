@@ -14,6 +14,7 @@ export default {
         var result = []
         var teams = []
         var pms = []
+        var depts = []
         var assignees = []
         var customers = []
         var developers = []
@@ -33,6 +34,18 @@ export default {
             'to document',
             'backlog',
             'qa research'
+        ]
+        var desiredStatusDept = [
+            'backlog',
+            'tech review',
+            'development plan',
+            'in development',
+            'paused',
+            'Details (New)',
+            'team code review',
+            'code review',
+            'testing',
+            'waiting for release'
         ]
         var all = []
         if(orderBy == 'assignee'){
@@ -179,6 +192,41 @@ export default {
                 })
             }
         }
+        if(orderBy == 'department'){
+            console.log('ORDER BY DEPARTMENT')
+            var deptBlackList = []
+            if(localitems){
+                localitems.map(item => {
+                    var status = ''
+                    status = item.fields.status.name
+                    
+                    var dept = item.fields.customfield_10115 && item.fields.customfield_10115.value ? item.fields.customfield_10115.value : "Unassigned"
+                    depts.push(dept)
+                    
+                    if(!deptBlackList.includes(dept)){
+                        if(item.fields.customfield_10115 && !customers.includes(item.fields.customfield_10115.value)){
+                            customers.push(item.fields.customfield_10115.value)
+                        }
+                        // depts
+                        if(!result[dept]){
+                            result[dept] = {}
+                        }
+                        if(!result[dept][status]){
+                            result[dept][status] = []
+                        }
+                        // sort filter statuses
+                        if( item.fields.status &&  
+                            (desiredStatusDept.includes(item.fields.status.name.toLowerCase()) 
+                            || desiredStatusList.includes(item.fields.status.name.toLowerCase())
+                            )){
+                            all.push(item)
+                            result[dept][status].push(item)                
+                        }
+                    }
+                })
+            }
+        }
+        
         if(filters){
             if(filters.hiddenAssignees && typeof(filters.hiddenAssignees == 'object')){
                 assigneesBlackList = [...filters.hiddenAssignees]

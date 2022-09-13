@@ -6,7 +6,7 @@
                 <div class="filter-options">
                     <span v-click-outside="closeDropdown" class="filter-option">
                         <!-- Sort By -->
-                        <div v-if="$route.name !== 'PMBoard'" style="display: inline-block; " >
+                        <div v-if="$route.name !== 'PMBoard' && $route.name !== 'Departments'" style="display: inline-block; " >
                             <label for="pet-select">View by:</label>
                             <select v-model="groupBy" name="View by">
                                 <option value="team">Team</option>
