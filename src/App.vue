@@ -17,7 +17,6 @@ export default {
     ...mapActions([
       'setBlacklist',
       'flushErrors',
-      'setGroupBy',
       'clearData'
     ])
   },
@@ -35,6 +34,9 @@ export default {
       }
     }
     this.flushErrors()
+  },
+  mounted(){
+    this.clearData()
   },
   destroyed(){
     this.clearData()
