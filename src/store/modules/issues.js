@@ -94,6 +94,7 @@ const actions = {
         commit('SET_MODE', mode)
     },
     setGroupBy({commit}, groupBy){
+        console.log('GROUP_BY', groupBy)
         commit('GROUP_BY', groupBy)
     },
     setFilter({commit}, filter){
@@ -227,8 +228,10 @@ const mutations = {
         state.allIssues = all
         console.log("PM ISSUES ADDED TO ALLISSUES ", all.length)
     },
+    CLEAR_ALL(state){
+        state.allIssues = []
+    },
     RECORD_ISSUES(state, issues){
-        console.log("")
         var all = [...state.allIssues]
         if(all.length > 0 && issues.length > 0){
             for(var i = 0; i < issues.length; i++){
@@ -284,7 +287,7 @@ const mutations = {
         state.customers= []
         state.assignees = []
         state.pmTasks = {}
-        state.groupBy =  'team'
+        // state.groupBy =  'team'
         state.filters = []
         state.blacklistedAssignees = []
         state.mode = 'teams'
