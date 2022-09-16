@@ -1,5 +1,6 @@
 export default {
     sortedIssues(items, filters, orderBy){
+        console.log("sorted issues order by ", orderBy)
         var localitems = [...items]
         if(filters && filters.length > 0 && filters.includes('priority')){
             localitems = localitems.sort((a, b) => {
@@ -114,6 +115,9 @@ export default {
             }
         }
         if(orderBy == 'team' || !orderBy){
+            if(!orderBy){
+                console.log("SORTING BY TEAM, because orderBy is not defined", orderBy)
+            }
             var teamsBlackList = []
             if(localitems){
                 localitems.map(item => {
@@ -193,12 +197,11 @@ export default {
             }
         }
         if(orderBy == 'department'){
-            console.log('ORDER BY DEPARTMENT')
             var deptBlackList = []
             if(localitems){
                 localitems.map(item => {
                     var status = ''
-                    status = item.fields.status.name
+                    status = item.fields.status.name.toLowerCase()
                     
                     var dept = item.fields.customfield_10115 && item.fields.customfield_10115.value ? item.fields.customfield_10115.value : "Unassigned"
                     depts.push(dept)
@@ -402,6 +405,9 @@ export default {
                                         }
                                         if(groupBy == 'pm' && task.fields.customfield_10106){
                                             key = task.fields.customfield_10106.displayName.toLowerCase()
+                                        }
+                                        if(groupBy == 'department' && task.fields.customfield_10115){
+                                            key = task.fields.customfield_10115.value.toLowerCase()
                                         }
                                         if(task.fields.summary.toLowerCase().includes(query.toLowerCase()) 
                                         || task.key.toLowerCase().includes(query.toLowerCase())

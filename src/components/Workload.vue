@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!getIssuesLoading">
+    <div v-if="!getIssuesLoading" >
         <div v-if="items && $route.name == 'Dashboard'">
             <div v-for="(item, index) in Object.keys(items).sort((a, b) => a.localeCompare(b))" :key="index" class="list-row">
                 <div class="column primary-column">
@@ -540,9 +540,9 @@
                 </div>
                 <!-- BACKLOG -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Backlog <span class="number">{{items[item]['Backlog'] ? items[item]['Backlog'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Backlog <span class="number">{{items[item]['backlog'] ? items[item]['backlog'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Backlog']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['backlog']" :key="index+item">
                             <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -575,9 +575,9 @@
                 </div>
                 <!-- REVIEW -->
                 <div style="text-align: left;" class="column">
-                    <div class="title" style="text-align: center">Tech Review <span class="number">{{items[item]['Tech Review'] ? items[item]['Tech Review'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Tech Review <span class="number">{{items[item]['tech review'] ? items[item]['tech review'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Tech Review']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['tech review']" :key="index+item">
                             <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -599,9 +599,9 @@
                 </div>
                 <!-- Development Plan -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Development Plan <span class="number">{{items[item]['Development Plan'] ? items[item]['Development Plan'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Development Plan <span class="number">{{items[item]['development plan'] ? items[item]['development plan'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Development Plan']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['development plan']" :key="index+item">
                             <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -634,9 +634,9 @@
                 </div>
                 <!-- In Development -->
                 <div class="column">
-                    <div class="title" style="text-align: center">In Development <span class="number">{{items[item]['In Development'] ? items[item]['In Development'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">In Development <span class="number">{{items[item]['in development'] ? items[item]['in development'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['In Development']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['in development']" :key="index+item">
                             <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -669,9 +669,9 @@
                 </div>
                 <!-- Paused -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Paused <span class="number">{{items[item]['Paused'] ? items[item]['Paused'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Paused <span class="number">{{items[item]['paused'] ? items[item]['paused'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Paused']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['paused']" :key="index+item">
                             <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -704,9 +704,9 @@
                 </div>
                 <!-- Team Code Review -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Team Code Review <span class="number">{{items[item]['Team Code Review'] ? items[item]['Team Code Review'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Team Code Review <span class="number">{{items[item]['team code review'] ? items[item]['team code review'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Team Code Review']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['team code review']" :key="index+item">
                             <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -739,9 +739,9 @@
                 </div>
                 <!-- Code Review -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Code Review <span class="number">{{items[item]['Code Review'] ? items[item]['Code Review'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Code Review <span class="number">{{items[item]['code review'] ? items[item]['code review'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Code Review']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['code review']" :key="index+item">
                            <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -774,9 +774,9 @@
                 </div>
                 <!-- Testing -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Testing <span class="number">{{items[item]['Testing'] ? items[item]['Testing'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Testing <span class="number">{{items[item]['testing'] ? items[item]['testing'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Testing']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['testing']" :key="index+item">
                            <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -809,9 +809,9 @@
                 </div>
                 <!-- Waiting for Release -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Waiting for Release <span class="number">{{items[item]['Waiting for Release'] ? items[item]['Waiting for Release'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Waiting for Release <span class="number">{{items[item]['waiting for release'] ? items[item]['waiting for release'].length : 0}}</span></div>
                     <div class="tasks">
-                        <div class="task" v-for="(task, index) in items[item]['Waiting for Release']" :key="index+item">
+                        <div class="task" v-for="(task, index) in items[item]['waiting for release']" :key="index+item">
                            <div style="display: flex;">
                                 <div style="display: inline-block; width: 20px;">
                                     <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
@@ -852,8 +852,9 @@
 
 <script>
 import {mapActions, mapGetters} from 'vuex'
-import Spinner                  from './partials/Spinner.vue'
 import FUNCTIONS                from '../functions.js'
+import Spinner                  from './partials/Spinner.vue'
+
 
 export default {
     name: 'Workload',
@@ -902,8 +903,10 @@ export default {
             if(team.toLowerCase() == 'plotnikov team'){
                 return ' (Communications / Loans)'
             }
-        }
+        },
+        
     },
+
 }
 </script>
 
