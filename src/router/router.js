@@ -105,12 +105,12 @@ router.beforeEach((to, from, next) => {
             console.log('token found in localStorage')
             // we have a state.user object but
             // we need to check if the token is still valid
-            try{
+            // try{
                 // store.dispatch('setToken', localStorage.j_token)
                 if(to && to.name == 'PMBoard'){
                     store.dispatch('setGroupBy', 'pm')
                 }
-                if(to && to.name == 'Departments'){
+                else if(to && to.name == 'Departments'){
                     store.dispatch('setGroupBy', 'department')
                 }
                 else {
@@ -119,14 +119,14 @@ router.beforeEach((to, from, next) => {
                 console.log('valid token')
                 // user is logged in with a valid token
                 next()
-            }catch(e){
-                console.log('token did not go through for some reasons... deleting user from state')
-                // the token is invalid so we will have the user login again
-                // clear the token and user info
-                next({
-                    path: '/login',
-                })
-            }
+            // }catch(e){
+            //     console.log('token did not go through for some reasons... deleting user from state')
+            //     // the token is invalid so we will have the user login again
+            //     // clear the token and user info
+            //     next({
+            //         path: '/login',
+            //     })
+            // }
         }
     } 
     else {
