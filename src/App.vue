@@ -7,17 +7,59 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'App',
   components: {
   },
+  watch: {
+    getEpicsLoaded(n){
+      if(n == true){
+        console.log("GET EPICS LOADED UPDATED", n)
+        if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
+          console.log(" <<<<<<<<<<<<<<< ALL LOADED")
+          this.createGanttTable({issues: this.getAllIssues, epics: this.getEpics})
+        }
+      }
+    },
+    getTeamsLoaded(n){
+      if(n == true){
+        console.log("GET TEAMS LOADED UPDATED", n)
+        if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
+          console.log(" <<<<<<<<<<<<<<< ALL LOADED")
+          this.createGanttTable({issues: this.getAllIssues, epics: this.getEpics})
+        }
+      }
+    },
+    getPmsLoaded(n){
+      if(n == true){
+        console.log("GET PMS LOADED UPDATED", n)
+        if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
+          console.log(" <<<<<<<<<<<<<<< ALL LOADED")
+          this.createGanttTable({issues: this.getAllIssues, epics: this.getEpics})
+        }
+      }
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'getRequestAttempts',
+      'getTeamsLoaded',
+      'getPmsLoaded',
+      'getEpicsLoaded',
+      'getAllIssues',
+      'getEpics'
+    ])
+  },
   methods: {
     ...mapActions([
       'setBlacklist',
       'flushErrors',
-      'clearData'
+      'fetchAllData',
+      'clearData',
+      'setRequestAttempts',
+      'createGanttTable'
     ])
   },
   created(){
@@ -34,11 +76,20 @@ export default {
       }
     }
     this.flushErrors()
+    console.log('getRequestAttempts',this.getRequestAttempts)
+    // if(this.getRequestAttempts == ''){
+    //   this.fetchAllData()
+    // }
+  },
+  updated(){
+    
   },
   mounted(){
     this.clearData()
+    this.setRequestAttempts('')
   },
   destroyed(){
+    this.setRequestAttempts('')
     this.clearData()
   }
 }
