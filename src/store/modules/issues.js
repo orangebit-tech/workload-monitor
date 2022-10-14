@@ -1,5 +1,6 @@
 import axios            from 'axios'
 import store            from '..'
+import _                from 'lodash'
 // import {router}         from '../../router/router.js'
 // import SETTINGS         from '../../settings'
 
@@ -23,14 +24,19 @@ const state = {
     mode: 'teams',
     route: null,
     epicsLoaded: false,
+    pmsLoaded: false,
+    teamsLoaded: false,
     allModulesLoaded: 'false',
     ganttTable: [],
     modulesLoaded: [],
+    allData: {},
+    requestAttempts: '',
 }
 
 // getters
 
 const getters = {
+    getAllData:         (state) => state.allData,
     getPmTasks:         (state) => state.pmTasks,
     hiddenAssignees:    (state) => state.blacklistedAssignees,
     getFilters:         (state) => state.filters,
@@ -46,10 +52,13 @@ const getters = {
     getSortedTeams:     (state) => state.sortedTeams,
     getMode:            (state) => state.mode,
     getEpics:           (state) => state.epics,
+    getTeamsLoaded:     (state) => state.teamsLoaded,
+    getPmsLoaded:       (state) => state.pmsLoaded,
     getEpicsLoaded:     (state) => state.epicsLoaded,
     getModulesLoaded:   (state) => state.modulesLoaded,
     getAllModulesLoaded:(state) => state.allModulesLoaded,
     getGanttTable:      (state) => state.ganttTable,
+    getRequestAttempts: (state) => state.requestAttempts,
     getRoute            (state) {
         return state.route;
     }
@@ -57,15 +66,73 @@ const getters = {
 
 // actions
 const actions = {
-    createGanttTable({commit}, issues, epics){
-        console.log("GOT ISSUES: ", issues)
-        console.log("GOT EPICS: ", epics)
-        if(typeof(issues) == 'object' && typeof(epics) == 'object'){
-            console.log("GOT ISSUES: ", issues)
-            console.log("GOT EPICS: ", epics)
-            commit('','')
+    createGanttTable({commit}, {issues, epics}){
+        var localIssues      = _.cloneDeep(issues)
+        var localEpics      = _.cloneDeep(epics)
+        console.log("GOT localIssues: ", localIssues)
+        console.log("GOT epicsTasks: ", localEpics)
+        var depts = []
+        var depIds = []
+        var epicIds = []
+        var result = []
+        
+        if(typeof(localIssues) == 'object' && typeof(localEpics) == 'object'){
+            if(localEpics.data && localEpics.data.length > 0){
+                localEpics.data.map((epic) => {
+                    var dep = {id: epic.dep.id, text: epic.dep.value}
+                    if(!depIds.includes(dep.id)){
+                        depts.push(dep)
+                        depIds.push(dep.id)
+                    }
+                    epicIds.push(epic.id)
+                    epic.parent = epic.dep.id
+                    
+                })
+            }
+            result.push(...depts)
+            result.push(...localEpics.data)
+
+            localIssues.map((issue) => {
+                issue.text = issue.fields.summary
+                issue.parent = issue.fields.parent ? issue.fields.parent.id : 77777777
+                issue.start_date = issue.fields.customfield_10105,
+                issue.end_date = issue.fields.customfield_10145
+                //issue.end_date = issue.fields.customfield_10117
+                issue.duration = ''
+
+            })
+            result.push(...localIssues)
+            result.push({id: 77777777, text: 'Uncategorized'})
+            commit('SET_GANTT_TABLE', result)
+            console.log("GANTT TABLE", result)
             // var table = []
         }
+    },
+    async fetchAllData({commit}){
+            commit('ADD_REQUEST_COUNT', '1')
+            console.log("SENDING ALL DATA REQUEST")
+            await axios({
+                url: `${'https://a3i3.dev:8443'}/jira/data`,
+                method: 'get',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': `application/json`,
+                },
+            }).then(res => {
+                console.log("RECEIVED RESPONSE FROM ALL DATA",res)
+                // var epics = res.data
+                
+                    commit('SET_ALL_DATA', res.data)
+                
+                // commit("SET_EPICS_LOADING", true)
+                // commit('ADD_TO_LOADED_MODULES', 'epics')
+            }).catch(err => {
+                // commit("SET_EPICS_LOADING", true)
+                console.log(err)
+            })
+        //commit("SET_EPICS_LOADING", false)
+        //console.log("SENDING EPIC REQUEST")
+        
     },
     async fetchEpics({commit}){
         commit("SET_EPICS_LOADING", false)
@@ -85,10 +152,14 @@ const actions = {
             }
             commit("SET_EPICS_LOADING", true)
             commit('ADD_TO_LOADED_MODULES', 'epics')
+            commit('SET_MODULE_LOADED', 'epics')
         }).catch(err => {
             commit("SET_EPICS_LOADING", true)
             console.log(err)
         })
+    },
+    setRequestAttempts({commit}, attempts){
+        commit('ADD_REQUEST_COUNT', attempts)
     },
     setMode({commit}, mode){
         commit('SET_MODE', mode)
@@ -139,6 +210,7 @@ const actions = {
             issues = response.data?.issues ? response.data.issues : []
             commit('RECORD_ISSUES', issues)
             commit('ADD_TO_LOADED_MODULES', 'issues')
+            commit('SET_MODULE_LOADED', 'teams')
         }, (error) => {
             commit('SET_ERROR', error.message ? error.message : error)
             console.log(error)
@@ -162,6 +234,7 @@ const actions = {
             commit('RECORD_ISSUES', issues)
             commit("SET_ISSUES_LOADING", false)
             commit('ADD_TO_LOADED_MODULES', 'PmTasks')
+            commit('SET_MODULE_LOADED', 'pms')
         }, (error) => {
             commit('SET_PM_TASKS', {})
             commit('SET_ERROR', error.message ? error.message : error)
@@ -195,6 +268,26 @@ const actions = {
 
 // mutations
 const mutations = {
+    SET_GANTT_TABLE(state, table){
+        state.ganttTable = table
+    },
+    SET_MODULE_LOADED(state, mod){
+        if(mod == 'teams'){
+            state.teamsLoaded = true
+        }
+        if(mod == 'pms'){
+            state.pmsLoaded = true
+        }
+        if(mod == 'epics'){
+            state.epicsLoaded = true
+        }
+    },
+    ADD_REQUEST_COUNT(state, attempts){
+        state.requestAttempts = attempts
+    },
+    SET_ALL_DATA(state, data){
+        state.allData = data
+    },
     ADD_TO_LOADED_MODULES(state, module){
         var modules = []
         if(typeof(state.modulesLoaded) == 'object'){
@@ -281,6 +374,9 @@ const mutations = {
         state.sortedTeams = sortedTeams
     },
     CLEAR_DATA(state){
+        state.epicsLoaded = false
+        state.pmsLoaded = false,
+        state.teamsLoaded = false,
         state.sortedTeams = {}
         state.sorted = {}
         state.allIssues = []
