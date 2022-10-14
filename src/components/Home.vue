@@ -103,6 +103,11 @@ export default {
                     icon: 'ViewCompact'
                 },
                 {
+                    name: 'Release Plan',
+                    url: '/home/release-plan',
+                    icon: 'ViewCompact'
+                },
+                {
                     name: 'Roadmap',
                     url: '/home/roadmap',
                     icon: 'ViewCompact'

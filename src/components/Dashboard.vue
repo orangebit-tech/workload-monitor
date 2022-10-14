@@ -6,7 +6,7 @@
                 <div class="filter-options">
                     <span v-click-outside="closeDropdown" class="filter-option">
                         <!-- Sort By -->
-                        <div v-if="$route.name !== 'PMBoard' && $route.name !== 'Departments'" style="display: inline-block; " >
+                        <div v-if="$route.name !== 'PMBoard' && $route.name !== 'Departments' && $route.name !== 'Release Plan'" style="display: inline-block; " >
                             <label for="pet-select">View by:</label>
                             <select v-model="groupBy" name="View by">
                                 <option value="team">Team</option>
@@ -72,7 +72,7 @@ export default {
     },
     watch: {
         groupBy(n){
-            if(n == 'assignee' || n == 'team' || n == 'developer'){
+            if(n == 'assignee' || n == 'team' || n == 'developer' || n == 'rp'){
                 this.setGroupBy(n)
             }
         },

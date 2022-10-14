@@ -60,6 +60,13 @@ export const routes = [
                         ]
                     },
                     {
+                        path: "/home/release-plan",
+                        name: "Release Plan",
+                        component: Dashboard,
+                        children: [
+                        ]
+                    },
+                    {
                         path: "/home/roadmap",
                         name: "Roadmap",
                         component: Roadmap,
@@ -112,6 +119,9 @@ router.beforeEach((to, from, next) => {
                 }
                 else if(to && to.name == 'Departments'){
                     store.dispatch('setGroupBy', 'department')
+                }
+                else if(to && to.name == 'Release Plan'){
+                    store.dispatch('setGroupBy', 'rp')
                 }
                 else {
                     store.dispatch('setGroupBy', 'team')

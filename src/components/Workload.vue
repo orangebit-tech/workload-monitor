@@ -844,6 +844,214 @@
                 </div>
             </div>
         </div>
+        <div v-if="items && $route.name == 'Release Plan'">
+            <div v-for="(item, index) in Object.keys(items).sort((a, b) => a.localeCompare(b))" :key="index" class="list-row">
+                <div class="column primary-column">
+                    <div class="name">
+                        {{item}}
+                    </div>
+                    <div class="tasks-widget">
+                        <div style="text-align: left; margin-bottom: 5px;">
+                            <span style="font-weight: bold">Tasks</span> <span style="font-weight: 600; float: right;">{{functions.countTasks(items[item]).total}}</span> 
+                        </div>
+                        <!-- <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(1).color}"></div>
+                            <span>Highest</span> <span style="float: right;">{{functions.countTasks(items[item]).highest}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(2).color}"></div>
+                            <span>High</span> <span style="float: right;">{{functions.countTasks(items[item]).high}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(3).color}"></div>
+                            <span>Medium</span> <span style="float: right;">{{functions.countTasks(items[item]).medium}}</span> 
+                        </div>
+                        <div style="text-align: left;">
+                            <div class="priority-circle" style="margin-left: 0px;vertical-align: unset;" :style="{backgroundColor: functions.getPriority(4).color}"></div>
+                            <span>Low</span> <span style="float: right;">{{functions.countTasks(items[item]).low}}</span> 
+                        </div> -->
+
+                    </div>
+                    <!-- <span class="hide-button" style="position: absolute; left: 15px; bottom: 15px;" @click="addToBlacklistLocal({name: item, skipRefresh: 'false'})">Hide</span> -->
+                </div>
+                <!-- Sales -->
+                <div class="column">
+                    <div class="title" style="text-align: center">Sales <span class="number">{{items[item]['Sales'] ? items[item]['Sales'].length : 0}}</span></div>
+                    <div class="tasks">
+                        <div class="task" v-for="(task, index) in items[item]['Sales']" :key="index+item">
+                            <div style="display: flex;">
+                                <div style="display: inline-block; width: 20px;">
+                                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                                    <span style="float: right;margin-right: 10px; color: #4773BA" class="task-type">{{task.taskType}}</span>
+                                </div>
+                                <div class="subject">
+                                    <span style="display: inline-block;"> 
+                                        <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
+                                        <div v-if="task.fields.parent">
+                                            <span style="font-weight: bold;">Epic: </span>
+                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
+                                        </div>
+                                    </span> 
+                                    <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
+                                </div>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar bg-succsess"
+                                    role="progressbar"
+                                    :style="{ width: JSON.stringify(parseInt(task.progress)*10) + '%'}"
+                                    aria-valiemin="0"
+                                    style="border-radius: 0px 6px 6px 0px;"
+                                    aria-valuemax="10"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Negotiators -->
+                <div style="text-align: left;" class="column">
+                    <div class="title" style="text-align: center">Negotiators <span class="number">{{items[item]['Negotiators'] ? items[item]['Negotiators'].length : 0}}</span></div>
+                    <div class="tasks">
+                        <div class="task" v-for="(task, index) in items[item]['Negotiators']" :key="index+item">
+                            <div style="display: flex;">
+                                <div style="display: inline-block; width: 20px;">
+                                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                                    <span style="float: right;margin-right: 10px; color: #4773BA" class="task-type">{{task.taskType}}</span>
+                                </div>
+                                <div class="subject">
+                                    <span style="display: inline-block;"> 
+                                        <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
+                                        <div v-if="task.fields.parent">
+                                            <span style="font-weight: bold;">Epic: </span>
+                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
+                                        </div>
+                                    </span> 
+                                    <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
+                                </div>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar bg-succsess"
+                                    role="progressbar"
+                                    :style="{ width: JSON.stringify(parseInt(task.progress)*10) + '%'}"
+                                    aria-valiemin="0"
+                                    style="border-radius: 0px 6px 6px 0px;"
+                                    aria-valuemax="10"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Loans -->
+                <div class="column">
+                    <div class="title" style="text-align: center">Loans <span class="number">{{items[item]['Loans'] ? items[item]['Loans'].length : 0}}</span></div>
+                    <div class="tasks">
+                        <div class="task" v-for="(task, index) in items[item]['Loans']" :key="index+item">
+                            <div style="display: flex;">
+                                <div style="display: inline-block; width: 20px;">
+                                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                                    <span style="float: right;margin-right: 10px; color: #4773BA" class="task-type">{{task.taskType}}</span>
+                                </div>
+                                <div class="subject">
+                                    <span style="display: inline-block;"> 
+                                        <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
+                                        <div v-if="task.fields.parent">
+                                            <span style="font-weight: bold;">Epic: </span>
+                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
+                                        </div>
+                                    </span> 
+                                    <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
+                                </div>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar bg-succsess"
+                                    role="progressbar"
+                                    :style="{ width: JSON.stringify(parseInt(task.progress)*10) + '%'}"
+                                    aria-valiemin="0"
+                                    style="border-radius: 0px 6px 6px 0px;"
+                                    aria-valuemax="10"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Payments -->
+                <div class="column">
+                    <div class="title" style="text-align: center">Payments <span class="number">{{items[item]['Payments'] ? items[item]['Payments'].length : 0}}</span></div>
+                    <div class="tasks">
+                        <div class="task" v-for="(task, index) in items[item]['Payments']" :key="index+item">
+                            <div style="display: flex;">
+                                <div style="display: inline-block; width: 20px;">
+                                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                                    <span style="float: right;margin-right: 10px; color: #4773BA" class="task-type">{{task.taskType}}</span>
+                                </div>
+                                <div class="subject">
+                                    <span style="display: inline-block;"> 
+                                        <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
+                                        <div v-if="task.fields.parent">
+                                            <span style="font-weight: bold;">Epic: </span>
+                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
+                                        </div>
+                                    </span> 
+                                    <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
+                                </div>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar bg-succsess"
+                                    role="progressbar"
+                                    :style="{ width: JSON.stringify(parseInt(task.progress)*10) + '%'}"
+                                    aria-valiemin="0"
+                                    style="border-radius: 0px 6px 6px 0px;"
+                                    aria-valuemax="10"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Marketing -->
+                <div class="column">
+                    <div class="title" style="text-align: center">Marketing <span class="number">{{items[item]['Marketing'] ? items[item]['Marketing'].length : 0}}</span></div>
+                    <div class="tasks">
+                        <div class="task" v-for="(task, index) in items[item]['Marketing']" :key="index+item">
+                            <div style="display: flex;">
+                                <div style="display: inline-block; width: 20px;">
+                                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(task.fields.priority.id).color}"></div>
+                                    <span style="float: right;margin-right: 10px; color: #4773BA" class="task-type">{{task.taskType}}</span>
+                                </div>
+                                <div class="subject">
+                                    <span style="display: inline-block;"> 
+                                        <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
+                                        <div v-if="task.fields.parent">
+                                            <span style="font-weight: bold;">Epic: </span>
+                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
+                                        </div>
+                                    </span> 
+                                    <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
+                                </div>
+                            </div>
+                            <div class="progress">
+                                <div
+                                    class="progress-bar bg-succsess"
+                                    role="progressbar"
+                                    :style="{ width: JSON.stringify(parseInt(task.progress)*10) + '%'}"
+                                    aria-valiemin="0"
+                                    style="border-radius: 0px 6px 6px 0px;"
+                                    aria-valuemax="10"
+                                >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
     </div>
     <div v-else>
         <Spinner />
@@ -886,7 +1094,6 @@ export default {
                 keys.push('Unassigned')
             }
             return keys
-
         },
         addToBlacklistLocal({name, skipRefresh}){
             this.addAToBlacklist({name: name, skipRefresh: skipRefresh})
