@@ -1,10 +1,11 @@
 <template>
-  <div ref="gantt"></div>
+  <div ref="gantt">{{prepareEpics()}}</div>
 </template>
 
 <script>
 import {gantt} from 'dhtmlx-gantt';
 import {mapActions, mapGetters} from 'vuex'
+import _ from 'lodash';
 export default {
   name: 'gantt',
   props: {
@@ -25,39 +26,56 @@ export default {
       'getEpicsLoaded',
       'getAllIssues',
       'getEpics',
-      'getAllModulesLoaded'
+      'getAllModulesLoaded',
+      'getGanttTable',
+      'getTeamsLoaded',
+      'getPmsLoaded',
     ])
   },
   methods: {
     ...mapActions([
       'fetchEpics',
       'createGanttTable'
-    ])
+    ]),
+    update(){
+      console.log("HELLO")
+    },
+    prepareEpics(){
+      //if(this.getEpicsLoaded == true && this.getEpics.data){
+      if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
+        var epics = {}
+        var data = _.cloneDeep(this.getGanttTable)
+        epics.data = data
+          gantt.config.xml_date = "%Y-%m-%d";
+          gantt.config.branch_loading = true
+          gantt.config.readonly = true;
+          gantt.config.show_errors = false;
+          gantt.config.columns = [
+              {name: "text", label: "Name", tree: true, width: 200, resize: true},
+              {name: "start_date", label: "Start", width:100, align: "center", resize: true},
+              {name: "end_date", label: "Finish", width:100, align: "center", resize: true}
+          ];
+          gantt.init(this.$refs.gantt);
+          gantt.createDataProcessor((entity, action, data, id) => {
+            console.log('update')
+            this.$emit(`${entity}-updated`, id, action, data);
+          });
+        //gantt.parse(this.$props.tasks);
+        gantt.parse(epics);
+      }
+    }
   },
   watch: {
   },
+  updated(){
+    this.prepareEpics()
+  },
   mounted: async function () {
-    // await this.fetchEpics()
-
-      if(this.getAllModulesLoaded && this.getAllModulesLoaded == 3){
-        console.log("GETALLMODULESLOADED has 3 modules")
-
-      }
-    if(this.getEpicsLoaded == true && this.getEpics.data){
-      var epics = {}
-      epics.data = [...this.getEpics.data]
-        gantt.config.xml_date = "%Y-%m-%d";
-        gantt.config.readonly = true;
-        gantt.config.show_errors = false;
-        gantt.init(this.$refs.gantt);
-        gantt.createDataProcessor((entity, action, data, id) => {
-          console.log('update')
-          this.$emit(`${entity}-updated`, id, action, data);
-      });
-      //gantt.parse(this.$props.tasks);
-
-      gantt.parse(epics);
+    if(this.getAllModulesLoaded && this.getAllModulesLoaded == 3){
+      console.log("GETALLMODULESLOADED has 3 modules")
     }
+    this.prepareEpics()
+    
   }
 }
 </script>

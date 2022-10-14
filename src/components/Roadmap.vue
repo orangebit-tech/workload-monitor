@@ -1,5 +1,5 @@
 <template>
-    <div v-if="getEpicsLoaded == true" class="items-widget">
+    <div v-if="getTeamsLoaded == true && getPmsLoaded == true && getEpicsLoaded == true" class="items-widget">
         <div class="container1">
             <gantt class="left-container"></gantt>
         </div>
@@ -33,7 +33,10 @@ export default {
             'getEpicsLoaded',
             'getAllIssues',
             'getEpics',
-            'getAllModulesLoaded'
+            'getAllModulesLoaded',
+            'getTeamsLoaded',
+            'getPmsLoaded',
+            
         ]),
         functions: () => FUNCTIONS,
     },
