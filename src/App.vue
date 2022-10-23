@@ -124,6 +124,7 @@ export default {
   text-align: center !important;
   padding-left: 0.8% !important;
   padding-right: 0.8% !important;
+  max-width: 212px;
 }
 .tasks-widget {
       position: absolute;
@@ -155,7 +156,7 @@ body {
     color: #757575;
 }
 .priority-circle {
-      vertical-align: middle;
+      vertical-align: bottom !important;
     display: inline-block; 
     border-radius: 50%; 
     height: 12px;
