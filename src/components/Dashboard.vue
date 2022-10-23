@@ -111,7 +111,8 @@ export default {
             getAssigneesList:   'getAssigneesList',
             getGroupBy:         'getGroupBy',
             getSortedTeams:     'getSortedTeams',
-            getMode:            'getMode'
+            getMode:            'getMode',
+            getEpics:           'getEpics'
         }),
         assignees: function() { return  this.assigneesList},
         functions: () => FUNCTIONS
@@ -172,7 +173,7 @@ export default {
             'setFilter'
         ]),
         getItems(){
-            var items = this.functions.searchFilter(this.functions.sortedIssues(this.getAllIssues, this.getFilters ? this.getFilters : [], this.getGroupBy), this.query, this.getGroupBy)
+            var items = this.functions.searchFilter(this.functions.sortedIssues(this.getEpics.data && this.$route.name == 'Release Plan' ? [...this.getAllIssues, ...this.getEpics.data]: this.getAllIssues, this.getFilters ? this.getFilters : [], this.getGroupBy), this.query, this.getGroupBy)
             var keys = Object.keys(items)
             var length = 0
             for(var i = 0; i< keys.length; i++){

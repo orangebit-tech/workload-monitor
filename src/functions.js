@@ -1,12 +1,15 @@
+import _ from 'lodash'
 
 const getProgress = (status) => {
-    return (status == 'development plan') ? 1 
-    : (status == 'in development' || status == 'team code review') ? 5 
-    : (status == 'code review' || status == 'testing') ? 8 
-    : (status == 'waiting for release' 
-        || status == 'released to production'
-        || status == 'closed'
-        || status == 'to document'
+    var stat = status.toLowerCase()
+    return (stat == 'development plan') ? 1 
+    : (stat == 'in development' || stat == 'team code review') ? 5 
+    : (stat == 'code review' || stat == 'testing') ? 8 
+    : (stat == 'waiting for release' 
+        || stat == 'released to production'
+        || stat == 'closed'
+        || stat == 'to document'
+        || stat == 'documentation finished'
         ) ? 10
     : 0 
 }
@@ -60,7 +63,9 @@ const sortedIssues = (items, filters, orderBy)=> {
         'waiting for release',
         'released to production',
         'closed',
-        'to document'
+        'to document',
+        'documentation finished',
+        'done'
     ]
     var desiredStatusDept = [
         'backlog',
@@ -185,6 +190,15 @@ const sortedIssues = (items, filters, orderBy)=> {
     if(orderBy == 'pm'){
         var pmsBlackList = []
         if(localitems){
+            var pmsWhiteList = [
+                'Monica Finelli',
+                'Ben Williams',
+                'Dmitry Drigo',
+                'Natalia Teteriukova',
+                'Nick Veremey',
+                'Dmitry Kozhevnikov',
+                'Unassigned'
+            ]
             localitems.map(item => {
                 var status = ''
                 function itemStatus (status) {
@@ -206,7 +220,7 @@ const sortedIssues = (items, filters, orderBy)=> {
                 var pm = item.fields.customfield_10106 && item.fields.customfield_10106.displayName ? item.fields.customfield_10106.displayName : "Unassigned"
                 pms.push(pm)
 
-                if(!pmsBlackList.includes(pm)){
+                if(!pmsBlackList.includes(pm) && pmsWhiteList.includes(pm)){
                     if(item.fields.customfield_10106 && !customers.includes(item.fields.customfield_10106.displayName)){
                         customers.push(item.fields.customfield_10106.displayName)
                     }
@@ -221,6 +235,7 @@ const sortedIssues = (items, filters, orderBy)=> {
                     if( item.fields.status &&  
                         (desiredStatusPM.includes(item.fields.status.name.toLowerCase()) 
                         || desiredStatusList.includes(item.fields.status.name.toLowerCase())
+
                         )){
                         all.push(item)
                         result[pm][status].push(item)                
@@ -231,24 +246,34 @@ const sortedIssues = (items, filters, orderBy)=> {
     }
     if(orderBy == 'rp'){
         if(localitems){
-            localitems.map(item => {
+            localitems.map(it => {
+                var item = _.cloneDeep(it)
                 var dept = ''
                 var quart = ''
                 function getQuarter (date) {
                     var targetEndDate = new Date(date)
-                    return  targetEndDate.getMonth() >=1 && targetEndDate.getMonth() <= 3     ? 'Q1' 
-                            : targetEndDate.getMonth() >=4 && targetEndDate.getMonth() <= 6     ? 'Q2' 
-                            : targetEndDate.getMonth() >=7 && targetEndDate.getMonth() <= 9     ? 'Q3' 
-                            : targetEndDate.getMonth() >=10 && targetEndDate.getMonth() <= 12     ? 'Q4' 
-                            : 0
+                    var year = targetEndDate.getUTCFullYear()
+                    var utcTargetEndDate = new Date(
+                        targetEndDate.getUTCFullYear(), 
+                        targetEndDate.getUTCMonth(),
+                        targetEndDate.getUTCDate(), 
+                        targetEndDate.getUTCHours(),
+                        targetEndDate.getUTCMinutes(), 
+                        targetEndDate.getUTCSeconds()
+                    );
+                    return      year > 2020 && utcTargetEndDate.getMonth() >=0   && utcTargetEndDate.getMonth() <= 2    ? year  + ' Q1' 
+                            :   year > 2020 && utcTargetEndDate.getMonth() > 2   && utcTargetEndDate.getMonth() <= 5    ? year  + ' Q2' 
+                            :   year > 2020 && utcTargetEndDate.getMonth() > 5   && utcTargetEndDate.getMonth() <= 8    ? year  + ' Q3' 
+                            :   year > 2020 && utcTargetEndDate.getMonth() > 8  && utcTargetEndDate.getMonth() <= 11    ? year  + ' Q4' 
+                            :   0
                 }
                 dept = false
                 if(item.fields.customfield_10115){
                     dept = item.fields.customfield_10115.value
                 }
+                // console.log('CHECKING ITEM ', item)
                 quart = getQuarter(item.fields.customfield_10118)
                 quarts.push(quart)
-
                 if(item.fields.customfield_10106 && !customers.includes(item.fields.customfield_10106.displayName)){
                     customers.push(item.fields.customfield_10106.displayName)
                 }
@@ -259,12 +284,13 @@ const sortedIssues = (items, filters, orderBy)=> {
                 if( quart !== 0 && !result[quart][dept]){
                     result[quart][dept] = []
                 }
-                // sort filter statuses
-                //console.log("DEPT " + dept)
                 if( item.fields.status &&  
                     (quart !== 0 && quart.includes("Q")) &&
                     desiredDepts.includes(dept) &&
-                    desiredStatusRP.includes(item.fields.status.name.toLowerCase())){
+                    desiredStatusRP.includes(item.fields.status.name.toLowerCase())
+                    && (item.fields.labels && typeof(item.fields.labels) == 'object')
+                    && (item.fields.labels.includes('Queue') || item.fields.labels[0] == 'Queue')
+                    ){
                         item.progress = getProgress(item.fields.status.name.toLowerCase())
                         all.push(item)
                         result[quart][dept].push(item)                
@@ -305,7 +331,6 @@ const sortedIssues = (items, filters, orderBy)=> {
             })
         }
     }
-    
     if(filters){
         if(filters.hiddenAssignees && typeof(filters.hiddenAssignees == 'object')){
             assigneesBlackList = [...filters.hiddenAssignees]

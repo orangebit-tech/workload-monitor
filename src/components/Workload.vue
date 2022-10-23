@@ -845,7 +845,7 @@
             </div>
         </div>
         <div v-if="items && $route.name == 'Release Plan'">
-            <div v-for="(item, index) in Object.keys(items).sort((a, b) => a.localeCompare(b))" :key="index" class="list-row">
+            <div v-for="(item, index) in Object.keys(items).sort((a, b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')))" :key="index" class="list-row">
                 <div class="column primary-column">
                     <div class="name">
                         {{item}}
@@ -887,10 +887,6 @@
                                 <div class="subject">
                                     <span style="display: inline-block;"> 
                                         <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
-                                        <div v-if="task.fields.parent">
-                                            <span style="font-weight: bold;">Epic: </span>
-                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
-                                        </div>
                                     </span> 
                                     <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                                 </div>
@@ -922,10 +918,6 @@
                                 <div class="subject">
                                     <span style="display: inline-block;"> 
                                         <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
-                                        <div v-if="task.fields.parent">
-                                            <span style="font-weight: bold;">Epic: </span>
-                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
-                                        </div>
                                     </span> 
                                     <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                                 </div>
@@ -957,10 +949,6 @@
                                 <div class="subject">
                                     <span style="display: inline-block;"> 
                                         <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
-                                        <div v-if="task.fields.parent">
-                                            <span style="font-weight: bold;">Epic: </span>
-                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
-                                        </div>
                                     </span> 
                                     <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                                 </div>
@@ -992,10 +980,6 @@
                                 <div class="subject">
                                     <span style="display: inline-block;"> 
                                         <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
-                                        <div v-if="task.fields.parent">
-                                            <span style="font-weight: bold;">Epic: </span>
-                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
-                                        </div>
                                     </span> 
                                     <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                                 </div>
@@ -1027,10 +1011,6 @@
                                 <div class="subject">
                                     <span style="display: inline-block;"> 
                                         <a  target="_blank" :href="'https://americor.atlassian.net/browse/'+task.key" @click="viewTask(task)">{{task.fields.summary}}</a>
-                                        <div v-if="task.fields.parent">
-                                            <span style="font-weight: bold;">Epic: </span>
-                                            <a target="_blank" :href="'https://americor.atlassian.net/browse/'+task.fields.parent.key"  style="color: #4773ba" @click="viewTask(task)">{{task.fields.parent ? task.fields.parent.fields.summary : ''}}</a>
-                                        </div>
                                     </span> 
                                     <span v-if="task.estimated_hours" style="font-style: italic">~{{task.estimated_hours}} hours</span>
                                 </div>
@@ -1074,6 +1054,7 @@ export default {
         ...mapGetters([
             'getGroupBy',
             'getIssuesLoading',
+            'getEpics'
         ]),
         functions: () => FUNCTIONS
     },
@@ -1113,6 +1094,9 @@ export default {
         },
         
     },
+    created(){
+        console.log('EPICS ', this.getEpics)
+    }
 
 }
 </script>
