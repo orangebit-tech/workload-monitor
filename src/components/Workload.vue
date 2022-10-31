@@ -1175,7 +1175,7 @@ h1 {
     overflow: hidden;
 }
 .number {
-    text-decoration: underline;
+    /* text-decoration: underline; */
 }
 .priority-circle {
     margin-right: 5px;

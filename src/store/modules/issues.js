@@ -31,6 +31,8 @@ const state = {
     modulesLoaded: [],
     allData: {},
     requestAttempts: '',
+    newsLetter: [],
+    newsLetterLoaded: false,
 }
 
 // getters
@@ -59,7 +61,9 @@ const getters = {
     getAllModulesLoaded:(state) => state.allModulesLoaded,
     getGanttTable:      (state) => state.ganttTable,
     getRequestAttempts: (state) => state.requestAttempts,
-    getRoute            (state) {
+    getNewsLetter:      (state) => state.newsLetter,
+    getNewsLetterLoaded:(state) => state.newsLetterLoaded,
+    getRoute:           (state) => {
         return state.route;
     }
 }
@@ -155,6 +159,30 @@ const actions = {
             commit('SET_MODULE_LOADED', 'epics')
         }).catch(err => {
             commit("SET_EPICS_LOADING", true)
+            console.log(err)
+        })
+    },
+    async fetchNewsLetter({commit}){
+        commit("SET_NEWSLETTER_LOADED", false)
+        console.log("SENDING NEWSLETTER REQUEST")
+        await axios({
+            url: `${'https://a3i3.dev:8443'}/jira/newsletter`,
+            method: 'get',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': `application/json`,
+            },
+        }).then(res => {
+            console.log("RECEIVED RESPONSE FROM NEWSLETTER",res)
+            var newsLetter = res.data
+            if(newsLetter){
+                commit("RECORD_NEWSLETTER", newsLetter)
+            }
+            commit("SET_NEWSLETTER_LOADED", true)
+            commit('ADD_TO_LOADED_MODULES', 'newsletter')
+            commit('SET_MODULE_LOADED', 'newsletter')
+        }).catch(err => {
+            commit("SET_NEWSLETTER_LOADED", true)
             console.log(err)
         })
     },
@@ -263,11 +291,21 @@ const actions = {
     },
     resetLoadedModules({commit}){
         commit('RESET_LOADED_MODULES')
+    },
+    clearNewsLetter({commit}){
+        commit("CLEAR_NEWS_LETTER")
     }
 }
 
 // mutations
 const mutations = {
+    CLEAR_NEWS_LETTER(state){
+        state.newsLetter = []
+        state.newsLetterLoaded = false
+    },
+    RECORD_NEWSLETTER(state, newsletter){
+        state.newsLetter = newsletter
+    },
     SET_GANTT_TABLE(state, table){
         state.ganttTable = table
     },
@@ -308,6 +346,9 @@ const mutations = {
     },
     SET_EPICS_LOADING(state, bool){
         state.epicsLoaded = bool
+    },
+    SET_NEWSLETTER_LOADED(state, bool){
+        state.newsLetterLoaded = bool
     },
     RECORD_EPICS(state, epics){
         state.epics = epics
@@ -375,8 +416,8 @@ const mutations = {
     },
     CLEAR_DATA(state){
         state.epicsLoaded = false
-        state.pmsLoaded = false,
-        state.teamsLoaded = false,
+        state.pmsLoaded = false
+        state.teamsLoaded = false
         state.sortedTeams = {}
         state.sorted = {}
         state.allIssues = []

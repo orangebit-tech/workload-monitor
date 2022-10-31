@@ -6,6 +6,7 @@ import Settings         from '../components/Settings'
 import Dashboard        from '../components/Dashboard'
 import Roadmap          from '../components/Roadmap'
 import Items            from '../components/Items'
+import Overview         from '../components/Overview'
 import store            from '../store'
 import Login            from '../components/Login.vue'
 
@@ -29,8 +30,15 @@ export const routes = [
                 path: "home",
                 name: "Home",
                 component: Home,
-                redirect: '/home/dashboard',
+                redirect: '/home/overview',
                 children: [
+                    {
+                        path: "/home/overview",
+                        name: "Overview",
+                        component: Overview,
+                        children: [
+                        ]
+                    },
                     {
                         path: "/home/dashboard",
                         name: "Dashboard",

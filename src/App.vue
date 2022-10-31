@@ -58,6 +58,7 @@ export default {
       'flushErrors',
       'fetchAllData',
       'clearData',
+      'clearNewsLetter',
       'setRequestAttempts',
       'createGanttTable'
     ])
@@ -91,6 +92,7 @@ export default {
   destroyed(){
     this.setRequestAttempts('')
     this.clearData()
+    this.clearNewsLetter()
   }
 }
 </script>
@@ -156,11 +158,11 @@ body {
     color: #757575;
 }
 .priority-circle {
-      vertical-align: bottom !important;
     display: inline-block; 
     border-radius: 50%; 
     height: 12px;
     width: 12px;
+    opacity: 0.8;
 }
 
 
