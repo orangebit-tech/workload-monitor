@@ -1,7 +1,7 @@
 <template>
     <div class="main-view border-light shadow">
         <h1>Newsletter Week of {{showWeek(date)}}</h1>
-        <div v-if="getNewsLetterLoaded == true" class="notes">
+        <div v-if="getNewsLetterLoaded == true || makeAlive == true" class="notes">
             <!-- NEWSLETTER -->
             <div v-for="(issue, index) in getNewsLetter.issues" :key="index" class="note border-light shadow">
 
@@ -55,7 +55,8 @@ export default {
     },
     data(){
         return {
-            date: new Date()
+            date: new Date(),
+            makeAlive: false,
         }
     },
     methods: {
@@ -110,6 +111,22 @@ export default {
             }
         },
     },
+    mounted(){
+        // if(this.getNewsLetter && this.getNewsLetter !== []){
+        //     this.makeAlive = true
+        // }
+    },
+    created(){
+        setTimeout(() => {
+            if(this.getNewsLetterLoaded == true){
+                this.makeAlive = true
+                console.log("MakeAllive")
+            }
+        }, 4000);
+    },
+    beforeDestroy(){
+        this.makeAlive = false
+    }
 }
 </script>
 
