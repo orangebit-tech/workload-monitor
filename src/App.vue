@@ -92,7 +92,6 @@ export default {
   destroyed(){
     this.setRequestAttempts('')
     this.clearData()
-    this.clearNewsLetter()
   }
 }
 </script>

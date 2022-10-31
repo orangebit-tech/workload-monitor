@@ -274,6 +274,7 @@ const actions = {
         store.dispatch('fetchAllIssues')
         store.dispatch('fetchPmTasks')
         store.dispatch('fetchEpics')
+        store.dispatch('fetchNewsLetter')
 
     },
     async setTimePeriod({commit}, period){
@@ -418,12 +419,14 @@ const mutations = {
         state.epicsLoaded = false
         state.pmsLoaded = false
         state.teamsLoaded = false
+        state.newsLetterLoaded = false
         state.sortedTeams = {}
         state.sorted = {}
         state.allIssues = []
         state.customers= []
         state.assignees = []
         state.pmTasks = {}
+        state.newsLetter = []
         // state.groupBy =  'team'
         state.filters = []
         state.blacklistedAssignees = []

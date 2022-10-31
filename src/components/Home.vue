@@ -137,7 +137,8 @@ export default {
             'fetchPmTasks',
             'fetchEpics',
             'loadData',
-            'resetLoadedModules'
+            'resetLoadedModules',
+            'fetchNewsLetter'
         ]),
         toggle () {
             this.fullscreen = !this.fullscreen

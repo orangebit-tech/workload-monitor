@@ -41,7 +41,7 @@
 
 <script>
 import Spinner from './partials/Spinner'
-import {mapGetters, mapActions} from 'vuex'
+import {mapGetters} from 'vuex'
 export default {
     name: 'Overview',
     components: {
@@ -59,9 +59,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'fetchNewsLetter'
-        ]),
         getStyles(marks){
             var styles = []
             if(marks){
@@ -113,11 +110,6 @@ export default {
             }
         },
     },
-    mounted(){
-        // if(this.getNewsLetterLoaded == false || !this.getNewsLetterLoaded){
-            this.fetchNewsLetter()
-        // }
-    }
 }
 </script>
 
