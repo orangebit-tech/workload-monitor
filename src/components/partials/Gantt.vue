@@ -56,6 +56,11 @@ export default {
               {name: "end_date", label: "Finish", width:100, align: "center", resize: true}
           ];
           gantt.init(this.$refs.gantt);
+          gantt.config.scales = [
+              {unit: "month", step: 1, format: "%F, %Y"},
+              // {unit: "week", step: 1, format: weekScaleTemplate},
+              // {unit: "day", step:1, format: "%D", css:daysStyle }
+          ];
           gantt.createDataProcessor((entity, action, data, id) => {
             console.log('update')
             this.$emit(`${entity}-updated`, id, action, data);
