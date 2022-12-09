@@ -17,7 +17,7 @@
                         </div>
                     </div>
                     <div style="padding: 20px; padding-bottom: 5px; text-align: left; " v-if="content.type == 'paragraph'">
-                        <div class="parahraph" v-for="(el, ind) in content.content" :key="ind" style="text-align: left;" :style="getStyles(el.marks)">{{el.text}}</div>
+                        <div class="paragraph" v-for="(el, ind) in content.content" :key="ind" style="text-align: left;" :style="getStyles(el.marks)">{{el.text}}</div>
                     </div>
                     <!-- <div v-for="(element, ind) in content.content" :key="ind">
                         <div v-if="element.type == 'text'">
@@ -117,6 +117,7 @@ export default {
         // }
     },
     created(){
+        console.log(process.env.VUE_APP_SERVER_HOST)
         setTimeout(() => {
             if(this.getNewsLetterLoaded == true){
                 this.makeAlive = true
@@ -131,7 +132,7 @@ export default {
 </script>
 
 <style>
-.parahraph {
+.paragraph {
     display: inline;
     color: #757575
 }
@@ -152,7 +153,7 @@ export default {
     top: 132px;
     left: 20px;
     right: 20px;
-    bottom: 20px;
+    /* bottom: 20px; */
     background-color: white;
     padding: 20px;
 
