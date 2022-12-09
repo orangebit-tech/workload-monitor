@@ -21,14 +21,15 @@
         </div>
         <div class="column-names">
             <div class="item">
+            <div style="display: inline-block;vertical-align: -webkit-baseline-middle; width: 27px;">#</div>
             <div style="width: 11%;" class="column">
                 <div :class="{active: ifActiveOption('Priority')}" @click="setFilter('Priority')"  class="priority-circle" :style="{backgroundColor: 'transparent'}"></div>
-                <a :class="{active: ifActiveOption('ID')}" @click="setFilter('ID')" style="display: inline-block;"> Key </a>
+                <a :class="{active: ifActiveOption('ID')}" @click="setFilter('ID')" style="display: inline-block;"> Ticket # </a>
             </div>
-            <div style="width: 29%; margin-right: 1%; max-width: 350px" class="column">
+            <div style="width: 26%; margin-right: 1%; max-width: 350px" class="column">
                 <a  :class="{active: ifActiveOption('Subject')}" @click="setFilter('Subject')">Subject</a>
             </div>
-            <div class="column">
+            <div class="column" style="width: 7%" >
                 <a :class="{active: ifActiveOption('Project Manager')}" @click="setFilter('Project Manager')">Project Manager</a>
             </div>
             <div style="width: 7%;" class="column">
@@ -38,28 +39,28 @@
                 <a :class="{active: ifActiveOption('Status')}" @click="setFilter('Status')">Status</a>
             </div>
             <div class="column">
-                <a :class="{active: ifActiveOption('Date Created')}" @click="setFilter('Date Created')">Date Created</a>
+                <a :class="{active: ifActiveOption('Start Date')}" @click="setFilter('Start Date')">Start Date</a>
             </div>
             <div class="column">
                 <a :class="{active: ifActiveOption('Target Start')}" @click="setFilter('Target Start')">Target Start</a>
             </div>
             <div class="column">
-                <a :class="{active: ifActiveOption('Due Date')}" @click="setFilter('Due Date')">Due Date</a>
+                <a :class="{active: ifActiveOption('Target End')}" @click="setFilter('Target End')">Target End</a>
             </div>
             </div>
         </div>
        <div v-for="(issue, index) in sortForPM(sortItems(functions.searchFilter(getAllIssues, query, 'pm'), filters), mode)" :key="index">
            <div class="item" >
-                <div style="display: inline-block;vertical-align: -webkit-baseline-middle;">{{index+1}}</div>
+                <div style="display: inline-block;vertical-align: -webkit-baseline-middle; width: 27px;">{{index+1}}</div>
 
                <div style="width: 11%; whitespace: nowrap" class="column">
                    <div class="priority-circle" :style="{backgroundColor: functions.getPriority(issue.fields.priority.id).color}"></div>
                    <a style="display: inline-block;" target="_blank" :href="'https://americor.atlassian.net/browse/'+issue.key"> {{issue.key}} </a>
                </div>
-                <div style="width: 29%; margin-right: 1%; max-width: 350px" class="column">
+                <div style="width: 26%; margin-right: 1%; max-width: 350px" class="column">
                    {{issue.fields.summary}}
                </div>
-               <div class="column">
+               <div style="width: 7%" class="column">
                    {{issue.fields.customfield_10106 ? issue.fields.customfield_10106.displayName : 'Unassigned'}}
                </div>
                <div style="width: 7%" class="column">
@@ -69,15 +70,15 @@
                    {{issue.fields.status.name}}
                </div>
                <div class="column">
-                   {{issue.fields.created}}
+                   {{functions.showNiceDate(issue.fields.created)}}
                </div>
                <!-- TARGET -->
                <div class="column">
                    {{issue.fields.customfield_10117 ? issue.fields.customfield_10117 : '-'}}
                </div>
-               <!-- Due Date -->
+               <!-- Target End -->
                <div class="column">
-                   {{issue.fields.duedate ? issue.fields.duedate : '-'}}
+                   {{issue.fields.customfield_10118 ? issue.fields.customfield_10118 : '-'}}
                </div>
            </div>
        </div>
@@ -106,6 +107,7 @@ export default {
         }
     },
     methods: {
+
         sortItems(items, filterBy){
             var result = [...items]
             if(filterBy[0] == 'ID'){
@@ -150,11 +152,11 @@ export default {
                 }
                 return result.sort((a,b) => parseInt(a.fields.priority.id) - parseInt(b.fields.priority.id))
             }
-            if(filterBy[0] == 'Date Created'){
-                if(filterBy[1] == 'Date Created'){
+            if(filterBy[0] == 'Start Date'){
+                if(filterBy[1] == 'Start Date'){
                     return result.sort((a,b) => {
-                    return new Date(a.fields.created).getTime() - new Date(b.fields.created).getTime()
-                })
+                        return new Date(a.fields.created).getTime() - new Date(b.fields.created).getTime()
+                    })
                 }
                 return result.sort((a,b) => {
                     return new Date(b.fields.created).getTime() - new Date(a.fields.created).getTime()
@@ -170,14 +172,14 @@ export default {
                     return new Date(b.fields.customfield_10117).getTime() - new Date(a.fields.customfield_10117).getTime()
                 })
             }
-            if(filterBy[0] == 'Due Date'){
-                if(filterBy[1] == 'Due Date'){
+            if(filterBy[0] == 'Target End'){
+                if(filterBy[1] == 'Target End'){
                     return result.sort((a,b) => {
-                    return new Date(a.fields.duedate).getTime() - new Date(b.fields.duedate).getTime()
+                    return new Date(a.fields.customfield_10118).getTime() - new Date(b.fields.customfield_10118).getTime()
                 })
                 }
                 return result.sort((a,b) => {
-                    return new Date(b.fields.duedate).getTime() - new Date(a.fields.duedate).getTime()
+                    return new Date(b.fields.customfield_10118).getTime() - new Date(a.fields.customfield_10118).getTime()
                 })
             }
             if(result.length < 1){
@@ -196,7 +198,7 @@ export default {
             var localItems = [...items]
             if(localItems && mode == 'pm'){
                 localItems.map(task => {
-                    if((!task.fields.customfield_10117 || !task.fields.duedate) && !statusesBlackList.includes(task.fields.status.name.toLowerCase())){
+                    if((!task.fields.customfield_10117 || !task.fields.customfield_10118) && !statusesBlackList.includes(task.fields.status.name.toLowerCase())){
                         if(!result.includes(task)){
                             result.push(task)
                         }
