@@ -560,11 +560,27 @@ const searchFilter = (tasks, query, groupBy)=> {
     return result
 
 }
+const showNiceDate = (date) => {
+    var newDate  = new Date(date)
+    // const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+    // const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    // var hours = newDate.getHours();
+    // var minutes = newDate.getMinutes();
+    // // var ampm = hours >= 12 ? 'pm' : 'am';
+    // hours = hours % 12;
+    // hours = hours ? hours : 12; // the hour '0' should be '12'
+    // minutes = minutes < 10 ? '0'+minutes : minutes;
+    // var strTime = hours + ':' + minutes + ' ' + ampm;
+    const month = parseInt(newDate.getMonth())+1
+    const day =  newDate.getDate()
+    return ((month < 10) ? '0' : '') + month +  '-' + ((day < 10) ? '0' : '') + day + '-' + newDate.getFullYear()
+}
 export default {
     getProgress,
     sortedIssues,
     getPriority,
     countTasks,
     howLongAgo,
-    searchFilter
+    searchFilter,
+    showNiceDate
 }
