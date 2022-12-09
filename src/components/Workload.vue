@@ -1000,7 +1000,7 @@
                 </div>
                 <!-- Marketing -->
                 <div class="column">
-                    <div class="title" style="text-align: center">Marketing <span class="number">{{items[item]['Marketing'] ? items[item]['Marketing'].length : 0}}</span></div>
+                    <div class="title" style="text-align: center">Affiliates <span class="number">{{items[item]['Marketing'] ? items[item]['Marketing'].length : 0}}</span></div>
                     <div class="tasks">
                         <div class="task" v-for="(task, index) in items[item]['Marketing']" :key="index+item">
                             <div style="display: flex;">
