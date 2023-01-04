@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!getIssuesLoading" >
+    <div v-if="getDataLoaded == true" >
         <div v-if="items && $route.name == 'Dashboard'">
             <div v-for="(item, index) in Object.keys(items).sort((a, b) => a.localeCompare(b))" :key="index" class="list-row">
                 <div class="column primary-column">
@@ -1054,7 +1054,8 @@ export default {
         ...mapGetters([
             'getGroupBy',
             'getIssuesLoading',
-            'getEpics'
+            'getEpics',
+            'getDataLoaded'
         ]),
         functions: () => FUNCTIONS
     },
@@ -1078,7 +1079,7 @@ export default {
         },
         addToBlacklistLocal({name, skipRefresh}){
             this.addAToBlacklist({name: name, skipRefresh: skipRefresh})
-            console.log(name, ' added to blacklist')
+            //console.log(name, ' added to blacklist')
             this.$forceUpdate()
         },
         getOccupation(team){
@@ -1095,7 +1096,7 @@ export default {
         
     },
     created(){
-        console.log('EPICS ', this.getEpics)
+        //console.log('EPICS ', this.getEpics)
     }
 
 }

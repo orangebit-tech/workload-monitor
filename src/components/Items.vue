@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!getIssuesLoading" class="display-block items-widget">
+    <div v-if="getDataLoaded == true" class="display-block items-widget">
         <div class="filters">
             <input placeholder="Search" v-model="query" class="filter-option" />
             <div class="filter-options">
@@ -267,6 +267,7 @@ export default {
         ...mapGetters([
             'getIssuesLoading',
             'getAllIssues',
+            'getDataLoaded',
         ]),
         functions: () => FUNCTIONS
     }

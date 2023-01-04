@@ -30,6 +30,7 @@ export default {
       'getGanttTable',
       'getTeamsLoaded',
       'getPmsLoaded',
+      'getDataLoaded',
     ])
   },
   methods: {
@@ -38,11 +39,13 @@ export default {
       'createGanttTable'
     ]),
     update(){
-      console.log("HELLO")
+      //console.log("HELLO")
     },
     prepareEpics(){
+      //console.log('preparing epics ', this.getEpics)
       //if(this.getEpicsLoaded == true && this.getEpics.data){
-      if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
+      if(this.getDataLoaded == true){
+        //console.log("getDataLoaded: true, gantt table: ", this.getGanttTable)
         var epics = {}
         var data = _.cloneDeep(this.getGanttTable)
         epics.data = data
@@ -62,7 +65,7 @@ export default {
               // {unit: "day", step:1, format: "%D", css:daysStyle }
           ];
           gantt.createDataProcessor((entity, action, data, id) => {
-            console.log('update')
+            //console.log('update')
             this.$emit(`${entity}-updated`, id, action, data);
           });
         //gantt.parse(this.$props.tasks);
@@ -77,7 +80,7 @@ export default {
   },
   mounted: async function () {
     if(this.getAllModulesLoaded && this.getAllModulesLoaded == 3){
-      console.log("GETALLMODULESLOADED has 3 modules")
+      //console.log("GETALLMODULESLOADED has 3 modules")
     }
     this.prepareEpics()
     

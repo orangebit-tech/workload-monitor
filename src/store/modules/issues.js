@@ -7,6 +7,7 @@ import _                from 'lodash'
 // initial state
 
 const state = {
+    dataLoaded: false,
     customers: [],
     allIssues: [],
     assignees: [],
@@ -38,6 +39,7 @@ const state = {
 // getters
 
 const getters = {
+    getDataLoaded:      (state) => state.dataLoaded,
     getAllData:         (state) => state.allData,
     getPmTasks:         (state) => state.pmTasks,
     hiddenAssignees:    (state) => state.blacklistedAssignees,
@@ -70,122 +72,6 @@ const getters = {
 
 // actions
 const actions = {
-    createGanttTable({commit}, {issues, epics}){
-        var localIssues      = _.cloneDeep(issues)
-        var localEpics      = _.cloneDeep(epics)
-        console.log("GOT localIssues: ", localIssues)
-        console.log("GOT epicsTasks: ", localEpics)
-        var depts = []
-        var depIds = []
-        var epicIds = []
-        var result = []
-        
-        if(typeof(localIssues) == 'object' && typeof(localEpics) == 'object'){
-            if(localEpics.data && localEpics.data.length > 0){
-                localEpics.data.map((epic) => {
-                    var dep = {id: epic.dep.id, text: epic.dep.value}
-                    if(!depIds.includes(dep.id)){
-                        depts.push(dep)
-                        depIds.push(dep.id)
-                    }
-                    epicIds.push(epic.id)
-                    epic.parent = epic.dep.id
-                    
-                })
-            }
-            result.push(...depts)
-            result.push(...localEpics.data)
-
-            localIssues.map((issue) => {
-                issue.text = issue.fields.summary
-                issue.parent = issue.fields.parent ? issue.fields.parent.id : 77777777
-                issue.start_date = issue.fields.customfield_10105,
-                issue.end_date = issue.fields.customfield_10145
-                //issue.end_date = issue.fields.customfield_10117
-                issue.duration = ''
-
-            })
-            result.push(...localIssues)
-            result.push({id: 77777777, text: 'Uncategorized'})
-            commit('SET_GANTT_TABLE', result)
-            console.log("GANTT TABLE", result)
-            // var table = []
-        }
-    },
-    async fetchAllData({commit}){
-            commit('ADD_REQUEST_COUNT', '1')
-            console.log("SENDING ALL DATA REQUEST")
-            await axios({
-                url: `${'https://a3i3.dev:8443'}/jira/data`,
-                method: 'get',
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Content-Type': `application/json`,
-                },
-            }).then(res => {
-                console.log("RECEIVED RESPONSE FROM ALL DATA",res)
-                // var epics = res.data
-                
-                    commit('SET_ALL_DATA', res.data)
-                
-                // commit("SET_EPICS_LOADING", true)
-                // commit('ADD_TO_LOADED_MODULES', 'epics')
-            }).catch(err => {
-                // commit("SET_EPICS_LOADING", true)
-                console.log(err)
-            })
-        //commit("SET_EPICS_LOADING", false)
-        //console.log("SENDING EPIC REQUEST")
-        
-    },
-    async fetchEpics({commit}){
-        commit("SET_EPICS_LOADING", false)
-        console.log("SENDING EPIC REQUEST")
-        await axios({
-            url: `${'https://a3i3.dev:8443'}/jira/epics`,
-            method: 'get',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': `application/json`,
-            },
-        }).then(res => {
-            console.log("RECEIVED RESPONSE FROM EPICS",res)
-            var epics = res.data
-            if(epics){
-                commit("RECORD_EPICS", epics)
-            }
-            commit("SET_EPICS_LOADING", true)
-            commit('ADD_TO_LOADED_MODULES', 'epics')
-            commit('SET_MODULE_LOADED', 'epics')
-        }).catch(err => {
-            commit("SET_EPICS_LOADING", true)
-            console.log(err)
-        })
-    },
-    async fetchNewsLetter({commit}){
-        commit("SET_NEWSLETTER_LOADED", false)
-        console.log("SENDING NEWSLETTER REQUEST")
-        await axios({
-            url: `${'https://a3i3.dev:8443'}/jira/newsletter`,
-            method: 'get',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': `application/json`,
-            },
-        }).then(res => {
-            console.log("RECEIVED RESPONSE FROM NEWSLETTER",res)
-            var newsLetter = res.data
-            if(newsLetter){
-                commit("RECORD_NEWSLETTER", newsLetter)
-            }
-            commit("SET_NEWSLETTER_LOADED", true)
-            commit('ADD_TO_LOADED_MODULES', 'newsletter')
-            commit('SET_MODULE_LOADED', 'newsletter')
-        }).catch(err => {
-            commit("SET_NEWSLETTER_LOADED", true)
-            console.log(err)
-        })
-    },
     setRequestAttempts({commit}, attempts){
         commit('ADD_REQUEST_COUNT', attempts)
     },
@@ -193,7 +79,7 @@ const actions = {
         commit('SET_MODE', mode)
     },
     setGroupBy({commit}, groupBy){
-        console.log('GROUP_BY', groupBy)
+        //console.log('GROUP_BY', groupBy)
         commit('GROUP_BY', groupBy)
     },
     setFilter({commit}, filter){
@@ -224,9 +110,9 @@ const actions = {
     async fetchAllIssues({commit}){
         var issues = []
         commit("SET_ISSUES_LOADING", true)
-        console.log('issues fetch started')
+        //console.log('issues fetch started')
         await axios({
-            url: `${'https://a3i3.dev:8443'}/jira/`,
+            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/`,
             // url: `${'https://americor.atlassian.net/rest/api/latest/search?jql=project=CRM&maxResults=10000'}`,
             method: 'get',
             headers: {
@@ -234,7 +120,7 @@ const actions = {
                 'Content-Type': `application/json`,
             },
         }).then( async (response) => {
-            console.log('issues fetch, received response', response)
+            //console.log('issues fetch, received response', response)
             issues = response.data?.issues ? response.data.issues : []
             commit('RECORD_ISSUES', issues)
             commit('ADD_TO_LOADED_MODULES', 'issues')
@@ -247,9 +133,9 @@ const actions = {
     async fetchPmTasks({commit}){
         var issues = []
         commit("SET_ISSUES_LOADING", true)
-        console.log('PM TASKS fetch started')
+        //console.log('PM TASKS fetch started')
         await axios({
-            url: `${'https://a3i3.dev:8443'}/jira/pm`,
+            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/pm`,
             // url: `${'https://americor.atlassian.net/rest/api/latest/search?jql=project=CRM&maxResults=10000'}`,
             method: 'get',
             headers: {
@@ -257,7 +143,7 @@ const actions = {
                 'Content-Type': `application/json`,
             },
         }).then( async (response) => {
-            console.log('PM RESPONSE', response)
+            //console.log('PM RESPONSE', response)
             issues = response.data?.issues ? response.data.issues : []
             commit('RECORD_ISSUES', issues)
             commit("SET_ISSUES_LOADING", false)
@@ -270,12 +156,148 @@ const actions = {
             commit("SET_ISSUES_LOADING", false)
         })
     },
-    async loadData(){
-        store.dispatch('fetchAllIssues')
-        store.dispatch('fetchPmTasks')
-        store.dispatch('fetchEpics')
-        store.dispatch('fetchNewsLetter')
+    createGanttTable({commit}, {issues, epics}){
+        var localIssues      = _.cloneDeep(issues)
+        var localEpics      = _.cloneDeep(epics)
+        //console.log("GOT localIssues: ", localIssues)
+        //console.log("GOT epicsTasks: ", localEpics)
+        var depts = []
+        var depIds = []
+        var epicIds = []
+        var result = []
+        
+        if(typeof(localIssues) == 'object' && typeof(localEpics) == 'object'){
+            //console.log("HERE IS OK <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+            if(localEpics && localEpics.length > 0){
+                localEpics.map((epic) => {
+                    var dep = {id: epic.dep.id, text: epic.dep.value}
+                    if(!depIds.includes(dep.id)){
+                        depts.push(dep)
+                        depIds.push(dep.id)
+                    }
+                    epicIds.push(epic.id)
+                    epic.parent = epic.dep.id
+                    
+                })
+            }
+            result.push(...depts)
+            result.push(...localEpics)
 
+            localIssues.map((issue) => {
+                issue.text = issue.fields.summary
+                issue.parent = issue.fields.parent ? issue.fields.parent.id : 77777777
+                issue.start_date = issue.fields.customfield_10105,
+                issue.end_date = issue.fields.customfield_10145
+                //issue.end_date = issue.fields.customfield_10117
+                issue.duration = ''
+
+            })
+            result.push(...localIssues)
+            result.push({id: 77777777, text: 'Uncategorized'})
+            commit('SET_GANTT_TABLE', result)
+            //console.log("GANTT TABLE", result)
+            // var table = []
+        }
+    },
+    async fetchEpics({commit}){
+        commit("SET_EPICS_LOADING", false)
+        //console.log("SENDING EPIC REQUEST")
+        await axios({
+            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/epics`,
+            method: 'get',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': `application/json`,
+            },
+        }).then(res => {
+            //console.log("RECEIVED RESPONSE FROM EPICS",res)
+            var epics = res.data
+            if(epics){
+                commit("RECORD_EPICS", epics)
+            }
+            commit("SET_EPICS_LOADING", true)
+            commit('ADD_TO_LOADED_MODULES', 'epics')
+            commit('SET_MODULE_LOADED', 'epics')
+        }).catch(err => {
+            commit("SET_EPICS_LOADING", true)
+            console.log(err)
+        })
+    },
+    async fetchNewsLetter({commit}){
+        commit("SET_NEWSLETTER_LOADED", false)
+        //console.log("SENDING NEWSLETTER REQUEST")
+        await axios({
+            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/newsletter`,
+            method: 'get',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': `application/json`,
+            },
+        }).then(res => {
+            //console.log("RECEIVED RESPONSE FROM NEWSLETTER",res)
+            var newsLetter = res.data
+            if(newsLetter){
+                commit("RECORD_NEWSLETTER", newsLetter)
+            }
+            commit("SET_NEWSLETTER_LOADED", true)
+            commit('ADD_TO_LOADED_MODULES', 'newsletter')
+            commit('SET_MODULE_LOADED', 'newsletter')
+        }).catch(err => {
+            commit("SET_NEWSLETTER_LOADED", true)
+            console.log(err)
+        })
+    },
+    async loadData(){
+        // store.dispatch('fetchAllIssues')
+        // store.dispatch('fetchPmTasks')
+        // store.dispatch('fetchEpics')
+        store.dispatch('fetchNewsLetter')
+        store.dispatch('fetchAllData')
+    },
+    async fetchAllData({commit}){
+            commit('ADD_REQUEST_COUNT', '1')
+            await axios({
+                url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/all`,
+                method: 'get',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': `application/json`,
+                },
+            }).then(res => {
+                //console.log("RECEIVED RESPONSE FROM ALL DATA",res)
+                var allIss = []
+                //var issEpics = []
+                allIss.push(...res.data.issues)
+                //allIss.push(...res.data.pm)
+                //allIss.push(...res.data.epics)
+                //console.log(allIss.length)
+                var checklist = {}
+                var dupes = []
+                allIss.map(iss => {
+                    if(!checklist[iss.key]){
+                        checklist[iss.key] = true
+                    }
+                    else {
+                        dupes.push(iss.key)
+                    }
+                    
+                })
+                //console.log("dupes ", dupes)
+                commit('RECORD_ISSUES', [...res.data.issues, ...res.data.pm])
+                commit("RECORD_EPICS", res.data.epics)
+                store.dispatch('createGanttTable', {issues: [...res.data.issues, ...res.data.pm], epics: res.data.epics})
+                commit('SET_DATA_LOADED', true)
+            }).catch(err => {
+                commit("SET_EPICS_LOADING", true)
+                // commit("SET_EPICS_LOADING", true)
+                commit('SET_PM_TASKS', {})
+                commit('SET_ERROR', err.message ? err.message : err)
+                commit('SET_DATA_LOADED', true)
+                console.log(err)
+            })
+        //commit("SET_EPICS_LOADING", false)
+        ////console.log("SENDING EPIC REQUEST")
+        
     },
     async setTimePeriod({commit}, period){
         commit("SET_TIME_PERIOD", period)
@@ -300,6 +322,9 @@ const actions = {
 
 // mutations
 const mutations = {
+    SET_DATA_LOADED(state, bool){
+        state.dataLoaded = bool
+    },
     CLEAR_NEWS_LETTER(state){
         state.newsLetter = []
         state.newsLetterLoaded = false
@@ -334,7 +359,7 @@ const mutations = {
         }
         if(typeof(state.modulesLoaded) == 'object' && state.modulesLoaded.length == 2){
             state.allModulesLoaded = 'true'
-            console.log('LOADED MODULES UPDATED ', state.allModulesLoaded)
+            //console.log('LOADED MODULES UPDATED ', state.allModulesLoaded)
 
         }
         if((typeof(modules) == 'object' && modules.length == 0) || (typeof(modules) == 'object' && modules.length == 1)) {
@@ -361,7 +386,7 @@ const mutations = {
         var all = [...state.allIssues]
         all.push(...issues)
         state.allIssues = all
-        console.log("PM ISSUES ADDED TO ALLISSUES ", all.length)
+        //console.log("PM ISSUES ADDED TO ALLISSUES ", all.length)
     },
     CLEAR_ALL(state){
         state.allIssues = []
@@ -379,7 +404,7 @@ const mutations = {
             all = issues
         }
         state.allIssues = all
-        console.log("ISSUES ADDED TO ALLISSUES ", all.length)
+        //console.log("ISSUES ADDED TO ALLISSUES ", all.length)
     },
     SET_PM_TASKS(state, tasks){
         state.pmTasks = tasks
@@ -416,6 +441,7 @@ const mutations = {
         state.sortedTeams = sortedTeams
     },
     CLEAR_DATA(state){
+        state.dataLoaded = false
         state.epicsLoaded = false
         state.pmsLoaded = false
         state.teamsLoaded = false
@@ -434,7 +460,7 @@ const mutations = {
         state.route = null
     },
     SET_FILTER(state, filter){
-        console.log("GOT FILTER ", filter)
+        //console.log("GOT FILTER ", filter)
         var existingFilters = state.filters && state.filters.length > 0 ? [...state.filters] : []
         existingFilters.push(filter)
         if(existingFilters.length > 1){
