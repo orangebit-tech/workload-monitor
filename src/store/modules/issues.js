@@ -107,55 +107,6 @@ const actions = {
             store.dispatch('fetchAllIssues')
         }
     },
-    async fetchAllIssues({commit}){
-        var issues = []
-        commit("SET_ISSUES_LOADING", true)
-        //console.log('issues fetch started')
-        await axios({
-            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/`,
-            // url: `${'https://americor.atlassian.net/rest/api/latest/search?jql=project=CRM&maxResults=10000'}`,
-            method: 'get',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': `application/json`,
-            },
-        }).then( async (response) => {
-            //console.log('issues fetch, received response', response)
-            issues = response.data?.issues ? response.data.issues : []
-            commit('RECORD_ISSUES', issues)
-            commit('ADD_TO_LOADED_MODULES', 'issues')
-            commit('SET_MODULE_LOADED', 'teams')
-        }, (error) => {
-            commit('SET_ERROR', error.message ? error.message : error)
-            console.log(error)
-        })
-    },
-    async fetchPmTasks({commit}){
-        var issues = []
-        commit("SET_ISSUES_LOADING", true)
-        //console.log('PM TASKS fetch started')
-        await axios({
-            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/pm`,
-            // url: `${'https://americor.atlassian.net/rest/api/latest/search?jql=project=CRM&maxResults=10000'}`,
-            method: 'get',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': `application/json`,
-            },
-        }).then( async (response) => {
-            //console.log('PM RESPONSE', response)
-            issues = response.data?.issues ? response.data.issues : []
-            commit('RECORD_ISSUES', issues)
-            commit("SET_ISSUES_LOADING", false)
-            commit('ADD_TO_LOADED_MODULES', 'PmTasks')
-            commit('SET_MODULE_LOADED', 'pms')
-        }, (error) => {
-            commit('SET_PM_TASKS', {})
-            commit('SET_ERROR', error.message ? error.message : error)
-            console.log(error)
-            commit("SET_ISSUES_LOADING", false)
-        })
-    },
     createGanttTable({commit}, {issues, epics}){
         var localIssues      = _.cloneDeep(issues)
         var localEpics      = _.cloneDeep(epics)
@@ -199,35 +150,12 @@ const actions = {
             // var table = []
         }
     },
-    async fetchEpics({commit}){
-        commit("SET_EPICS_LOADING", false)
-        //console.log("SENDING EPIC REQUEST")
-        await axios({
-            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/epics`,
-            method: 'get',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Content-Type': `application/json`,
-            },
-        }).then(res => {
-            //console.log("RECEIVED RESPONSE FROM EPICS",res)
-            var epics = res.data
-            if(epics){
-                commit("RECORD_EPICS", epics)
-            }
-            commit("SET_EPICS_LOADING", true)
-            commit('ADD_TO_LOADED_MODULES', 'epics')
-            commit('SET_MODULE_LOADED', 'epics')
-        }).catch(err => {
-            commit("SET_EPICS_LOADING", true)
-            console.log(err)
-        })
-    },
     async fetchNewsLetter({commit}){
         commit("SET_NEWSLETTER_LOADED", false)
         //console.log("SENDING NEWSLETTER REQUEST")
         await axios({
-            url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/newsletter`,
+            //${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}
+            url: `https://a3i3.dev:8443/jira/newsletter`,
             method: 'get',
             headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -257,7 +185,7 @@ const actions = {
     async fetchAllData({commit}){
             commit('ADD_REQUEST_COUNT', '1')
             await axios({
-                url: `${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}/jira/all`,
+                url: `https://a3i3.dev:8443/jira/all`,
                 method: 'get',
                 headers: {
                     'Access-Control-Allow-Origin': '*',
