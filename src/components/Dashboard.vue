@@ -169,11 +169,11 @@ export default {
             'addAToBlacklist',
             'removeFromBlacklist',
             'setGroupBy',
-            'fetchPmTasks',
             'setFilter'
         ]),
         getItems(){
-            var items = this.functions.searchFilter(this.functions.sortedIssues(this.getEpics.data && this.$route.name == 'Release Plan' ? [...this.getAllIssues, ...this.getEpics.data]: this.getAllIssues, this.getFilters ? this.getFilters : [], this.getGroupBy), this.query, this.getGroupBy)
+            var items = this.functions.searchFilter(this.functions.sortedIssues(this.getEpics && this.$route.name == 'Release Plan' ? [...this.getAllIssues, ...this.getEpics]: this.getAllIssues, this.getFilters ? this.getFilters : [], this.getGroupBy), this.query, this.getGroupBy)
+            //console.log("ITEMS ITEMS ITEMS ", items)
             var keys = Object.keys(items)
             var length = 0
             for(var i = 0; i< keys.length; i++){

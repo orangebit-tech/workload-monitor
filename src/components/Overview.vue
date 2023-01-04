@@ -117,11 +117,11 @@ export default {
         // }
     },
     created(){
-        console.log(process.env.VUE_APP_SERVER_HOST)
+        //console.log(process.env.VUE_APP_SERVER_HOST)
         setTimeout(() => {
             if(this.getNewsLetterLoaded == true){
                 this.makeAlive = true
-                console.log("MakeAllive")
+                //console.log("MakeAllive")
             }
         }, 4000);
     },

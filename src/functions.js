@@ -14,7 +14,7 @@ const getProgress = (status) => {
     : 0 
 }
 const sortedIssues = (items, filters, orderBy)=> {
-    console.log("sorted issues order by ", orderBy)
+    //console.log("sorted issues order by ", orderBy)
     var localitems = [...items]
     if(filters && filters.length > 0 && filters.includes('priority')){
         localitems = localitems.sort((a, b) => {
@@ -154,7 +154,7 @@ const sortedIssues = (items, filters, orderBy)=> {
     }
     if(orderBy == 'team' || !orderBy){
         if(!orderBy){
-            console.log("SORTING BY TEAM, because orderBy is not defined", orderBy)
+            //console.log("SORTING BY TEAM, because orderBy is not defined", orderBy)
         }
         var teamsBlackList = []
         if(localitems){
@@ -336,7 +336,7 @@ const sortedIssues = (items, filters, orderBy)=> {
             assigneesBlackList = [...filters.hiddenAssignees]
         }
     }
-    console.log("SORTED TASKS RESULT ", result)
+    //console.log("SORTED TASKS RESULT ", result)
     return result
 }
 const getPriority = (priority_id)=> {

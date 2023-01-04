@@ -133,12 +133,8 @@ export default {
     methods: {
         ...mapActions([
             'setTimePeriod',
-            'fetchAllIssues',
-            'fetchPmTasks',
-            'fetchEpics',
             'loadData',
             'resetLoadedModules',
-            'fetchNewsLetter'
         ]),
         toggle () {
             this.fullscreen = !this.fullscreen

@@ -16,27 +16,27 @@ export default {
   watch: {
     getEpicsLoaded(n){
       if(n == true){
-        console.log("GET EPICS LOADED UPDATED", n)
+        //console.log("GET EPICS LOADED UPDATED", n)
         if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
-          console.log(" <<<<<<<<<<<<<<< ALL LOADED")
+          //console.log(" <<<<<<<<<<<<<<< ALL LOADED")
           this.createGanttTable({issues: this.getAllIssues, epics: this.getEpics})
         }
       }
     },
     getTeamsLoaded(n){
       if(n == true){
-        console.log("GET TEAMS LOADED UPDATED", n)
+        //console.log("GET TEAMS LOADED UPDATED", n)
         if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
-          console.log(" <<<<<<<<<<<<<<< ALL LOADED")
+          //console.log(" <<<<<<<<<<<<<<< ALL LOADED")
           this.createGanttTable({issues: this.getAllIssues, epics: this.getEpics})
         }
       }
     },
     getPmsLoaded(n){
       if(n == true){
-        console.log("GET PMS LOADED UPDATED", n)
+        //console.log("GET PMS LOADED UPDATED", n)
         if(this.getTeamsLoaded == true && this.getPmsLoaded == true && this.getEpicsLoaded == true){
-          console.log(" <<<<<<<<<<<<<<< ALL LOADED")
+          //console.log(" <<<<<<<<<<<<<<< ALL LOADED")
           this.createGanttTable({issues: this.getAllIssues, epics: this.getEpics})
         }
       }
@@ -56,7 +56,6 @@ export default {
     ...mapActions([
       'setBlacklist',
       'flushErrors',
-      'fetchAllData',
       'clearData',
       'clearNewsLetter',
       'setRequestAttempts',
@@ -77,9 +76,8 @@ export default {
       }
     }
     this.flushErrors()
-    console.log('getRequestAttempts',this.getRequestAttempts)
+    //console.log('getRequestAttempts',this.getRequestAttempts)
     // if(this.getRequestAttempts == ''){
-    //   this.fetchAllData()
     // }
   },
   updated(){
