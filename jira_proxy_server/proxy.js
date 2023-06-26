@@ -14,6 +14,7 @@ const axios =               require('axios')
 app.use(cors())
 
 var newsLetter =            null
+var news =                  null
 
 async function fetchNewsLetter(){
     var maxResults = 100
@@ -43,6 +44,38 @@ async function fetchNewsLetter(){
         }
         newsLetter = issues
         return newsLetter;
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+async function fetchNews(){
+    var maxResults = 100
+    var url = 'https://americor.atlassian.net/rest/api/3/search?maxResults='+maxResults+'&filter=-4&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(Backlog%2C%20%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22Documentation%20Finished%22%2C%20Done%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22Tech%20Review%22%2C%20Testing%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22)%20AND%20labels%20in%20(Recent%2C%20"Next")%20order%20by%20created%20DESC';
+    const response = await axios( {
+        url: url, 
+        method: 'get',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type':                 `application/json`,
+        },
+        data: {
+            maxResults: maxResults,
+            jqls: {
+                project: 'CRM',
+            }
+        },
+        auth: {
+            username: process.env.VUE_APP_USERNAME,
+            password: process.env.VUE_APP_JIRA_TOKEN,
+        },
+        withCredentials: true,
+    }).then(async (res) => {
+        var issues = []
+        if(res.data && res.data){
+            issues = res.data
+        }
+        news = issues
+        return news;
     }).catch((err) => {
         console.log(err)
     })
@@ -265,6 +298,14 @@ app.get('/jira/newsletter', async(req, res) => {
     try{
         await fetchNewsLetter()
         res.json(newsLetter);
+    } catch (error){
+        console.log(error)
+    }
+});
+app.get('/jira/news', async(req, res) => {
+    try{
+        await fetchNews()
+        res.json(news);
     } catch (error){
         console.log(error)
     }

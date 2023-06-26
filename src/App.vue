@@ -95,7 +95,9 @@ export default {
 </script>
 
 <style>
-
+input {
+    background-color: white !important;
+}
 ::-webkit-scrollbar
 {
   display: block;
@@ -161,7 +163,6 @@ body {
     width: 12px;
     opacity: 0.8;
 }
-
 
 .display-block {
   text-align: center;
@@ -311,11 +312,12 @@ h3 {
 }
 input {
   border-radius: 0.215rem;
+
 }
 .button {
     border:1px solid transparent;
     -webkit-border-radius: 0px 0px 4px 4px;
-    font-size: 13px;
+    font-size: 14px;
     white-space: nowrap;
     margin-right: 7px;
     transition: .3s;
@@ -326,6 +328,7 @@ input {
     width: 100px !important;
     display: inline-block;
         text-align: center;
+        font-weight: 500;
 
 }
 

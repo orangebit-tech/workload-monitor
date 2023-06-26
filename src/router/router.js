@@ -7,8 +7,10 @@ import Dashboard        from '../components/Dashboard'
 import Roadmap          from '../components/Roadmap'
 import Items            from '../components/Items'
 import Overview         from '../components/Overview'
+import News             from '../components/News'
 import store            from '../store'
 import Login            from '../components/Login.vue'
+import Timeline         from '../components/Timeline.vue'
 
 export const routes = [
     {
@@ -36,6 +38,13 @@ export const routes = [
                         path: "/home/overview",
                         name: "Overview",
                         component: Overview,
+                        children: [
+                        ]
+                    },
+                    {
+                        path: "/home/news",
+                        name: "News",
+                        component: News,
                         children: [
                         ]
                     },
@@ -92,6 +101,13 @@ export const routes = [
             },
         ]
     },  
+    {
+        path: '/timeline',
+        name: "Timeline",
+        component: Timeline,
+        children: []
+    },
+    
 ]
 Vue.use(VueRouter)
 
