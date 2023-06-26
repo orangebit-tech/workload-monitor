@@ -88,6 +88,11 @@ export default {
             ],
             buttons: [
                 {
+                    name: 'News',
+                    url: '/home/news',
+                    icon: 'ViewCompact'
+                },
+                {
                     name: 'Overview',
                     url: '/home/overview',
                     icon: 'ViewCompact'

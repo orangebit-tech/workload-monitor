@@ -34,6 +34,8 @@ const state = {
     requestAttempts: '',
     newsLetter: [],
     newsLetterLoaded: false,
+    news: [],
+    newsLoaded: false,
 }
 
 // getters
@@ -65,6 +67,8 @@ const getters = {
     getRequestAttempts: (state) => state.requestAttempts,
     getNewsLetter:      (state) => state.newsLetter,
     getNewsLetterLoaded:(state) => state.newsLetterLoaded,
+    getNews:            (state) => state.news,
+    getNewsLoaded:      (state) => state.newsLoaded,
     getRoute:           (state) => {
         return state.route;
     }
@@ -175,10 +179,36 @@ const actions = {
             console.log(err)
         })
     },
+    async fetchNews({commit}){
+        commit("SET_NEWS_LOADED", false)
+        //console.log("SENDING NEWS REQUEST")
+        await axios({
+            //${process.env.VUE_APP_SERVER_HOST}:${process.env.VUE_APP_SERVER_PORT}
+            url: `https://a3i3.dev:8443/jira/news`,
+            method: 'get',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': `application/json`,
+            },
+        }).then(res => {
+            //console.log("RECEIVED RESPONSE FROM NEWS",res)
+            var news = res.data
+            if(news){
+                commit("RECORD_NEWS", news)
+            }
+            commit("SET_NEWS_LOADED", true)
+            commit('ADD_TO_LOADED_MODULES', 'news')
+            commit('SET_MODULE_LOADED', 'news')
+        }).catch(err => {
+            commit("SET_NEWS_LOADED", true)
+            console.log(err)
+        })
+    },
     async loadData(){
         // store.dispatch('fetchAllIssues')
         // store.dispatch('fetchPmTasks')
         // store.dispatch('fetchEpics')
+        store.dispatch('fetchNews')
         store.dispatch('fetchNewsLetter')
         store.dispatch('fetchAllData')
     },
@@ -245,6 +275,9 @@ const actions = {
     },
     clearNewsLetter({commit}){
         commit("CLEAR_NEWS_LETTER")
+    },
+    clearNews({commit}){
+        commit("CLEAR_NEWS")
     }
 }
 
@@ -257,8 +290,15 @@ const mutations = {
         state.newsLetter = []
         state.newsLetterLoaded = false
     },
+    CLEAR_NEWS(state){
+        state.news = []
+        state.newsLoaded = false
+    },
     RECORD_NEWSLETTER(state, newsletter){
         state.newsLetter = newsletter
+    },
+    RECORD_NEWS(state, news){
+        state.news = news
     },
     SET_GANTT_TABLE(state, table){
         state.ganttTable = table
@@ -303,6 +343,9 @@ const mutations = {
     },
     SET_NEWSLETTER_LOADED(state, bool){
         state.newsLetterLoaded = bool
+    },
+    SET_NEWS_LOADED(state, bool){
+        state.newsLoaded = bool
     },
     RECORD_EPICS(state, epics){
         state.epics = epics
@@ -374,6 +417,7 @@ const mutations = {
         state.pmsLoaded = false
         state.teamsLoaded = false
         state.newsLetterLoaded = false
+        state.newsLoaded = false
         state.sortedTeams = {}
         state.sorted = {}
         state.allIssues = []
@@ -381,6 +425,7 @@ const mutations = {
         state.assignees = []
         state.pmTasks = {}
         state.newsLetter = []
+        state.news = []
         // state.groupBy =  'team'
         state.filters = []
         state.blacklistedAssignees = []
