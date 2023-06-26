@@ -36,4 +36,7 @@ a {
     padding-top: 0px;
     color: #F3F4F6;
 }
+.js-menu-log-in-btn:hover {
+    color: #CE3D34 !important;
+}
 </style>

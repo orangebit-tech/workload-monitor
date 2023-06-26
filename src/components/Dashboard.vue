@@ -319,6 +319,7 @@ select {
     height: 22px;
     border-color: #dedfe0;
     color: #757575;
+        background-color: white
     
 }
 .filter-options {

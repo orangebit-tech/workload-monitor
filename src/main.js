@@ -9,6 +9,7 @@ import ClipboardCheck       from 'vue-material-design-icons/ClipboardCheck'
 import Cog                  from 'vue-material-design-icons/Cog'
 import ChevronDown          from 'vue-material-design-icons/ChevronDown'
 import VueFullscreen        from 'vue-fullscreen'
+import vuetify from './plugins/vuetify'
 
 
 
@@ -29,6 +30,7 @@ Vue.config.warnHandler = function () {
 new Vue({
   store,
   router,
-  render: h => h(App),
+  vuetify,
+  render: h => h(App)
 }).$mount('#app')
  

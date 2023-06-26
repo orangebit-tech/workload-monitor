@@ -7,7 +7,8 @@ module.exports = {
         ignored: [/node_modules/, /public/],
       }
     }
-  }, 
+  },
+
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
     host: 'americor.gixcore.com',
@@ -33,5 +34,9 @@ module.exports = {
     //     logLevel: "debug"
     //   }
     // }
-  }
+  },
+
+  transpileDependencies: [
+    'vuetify'
+  ]
 }
