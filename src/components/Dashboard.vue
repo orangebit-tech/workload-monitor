@@ -111,7 +111,6 @@ export default {
             getAssigneesList:   'getAssigneesList',
             getGroupBy:         'getGroupBy',
             getSortedTeams:     'getSortedTeams',
-            getMode:            'getMode',
             getEpics:           'getEpics'
         }),
         assignees: function() { return  this.assigneesList},

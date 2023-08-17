@@ -7,13 +7,15 @@ import {router}         from '../../router/router.js'
 
 const state = {
     token: '',
-    loggedIn: ''
+    loggedIn: '',
+    mode: ''
 }
 
 // getters
 
 const getters = {
     getLoggedIn:        (state) => state.loggedIn,
+    getAppMode:         (state) => state.mode,
     getToken:           (state) => 
     {
         if(state.token && state.token !== ''){
@@ -33,7 +35,13 @@ const actions = {
     setToken({commit}, token){
         if(process.env.VUE_APP_SUPER_SECURE_PASSWORD == token){
             commit('SET_TOKEN', token)
+            commit('SET_MODE', 'admin')
             router.push({path: '/'})
+        }
+        else if(process.env.VUE_APP_SUPER_SECURE_PASSWORD_PARTNERS == token){
+            commit('SET_TOKEN', token)
+            commit('SET_MODE', 'partner')
+            router.push({path: '/home/news'})
         }
         else {
             commit("SET_ERROR", 'Wrong Password')
@@ -50,6 +58,9 @@ const actions = {
 
 // mutations
 const mutations = {
+    SET_MODE(state, mode) {
+        state.mode = mode
+    },
     SET_LOGGED_IN(state, bool){
         state.loggedIn = bool
     },
