@@ -1,6 +1,7 @@
 <template>
     <div class="main-view border-light shadow">
-        <h1>Partners & Sales News (week of {{showWeek(date)}})</h1>
+        <h1>Newsletter (week of <span>{{showWeek(date)}}</span>)</h1>
+        <p style="text-align: center;"></p>
         <div v-if="getNewsLoaded == true || makeAlive == true" class="notes">
             <!-- NEWS -->
             <div v-for="(issue, index) in getNews.issues" :key="index" class="note border-light shadow">
@@ -16,8 +17,11 @@
                             <h6 v-if="content.attrs && content.attrs.level == 6">{{el.text}}</h6>
                         </div>
                     </div>
-                    <div style="padding: 20px; padding-bottom: 5px; text-align: left; " v-if="content.type == 'paragraph'">
-                        <div class="paragraph" v-for="(el, ind) in content.content" :key="ind" style="text-align: left;" :style="getStyles(el.marks)">{{el.text}}</div>
+                    <!-- {{content}} -->
+                    <div style="padding: 20px; padding-bottom: 5px; text-align: left; " v-if="content.type == 'paragraph' || content.type == 'link'">
+                        <div class="paragraph" v-for="(el, ind) in content.content" :key="ind" style="text-align: left;" :style="getStyles(el.marks)">
+                            {{el.text}}
+                        </div>
                     </div>
                     <!-- <div v-for="(element, ind) in content.content" :key="ind">
                         <div v-if="element.type == 'text'">
@@ -117,6 +121,7 @@ export default {
         // }
     },
     created(){
+        console.log(this.getNews)
         //console.log(process.env.VUE_APP_SERVER_HOST)
         setTimeout(() => {
             if(this.getNewsLoaded == true){

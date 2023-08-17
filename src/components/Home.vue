@@ -7,7 +7,7 @@
         <div :style="[fullscreen ? {'margin-top': 0+'px'}:{}]" class="buttons">
             <router-link is-active="is-active" 
             :class="{'is-still-active': $route.path.includes(button.name.toLowerCase() + '/')}" 
-            class="button top-button" v-for="(button, index) in buttons" 
+            class="button top-button" v-for="(button, index) in getButtons()" 
             :key="index" :to="button.url" >
                 <!-- ICON -->
                 <ViewCompact v-if="button.icon == 'ViewCompact'" />
@@ -16,7 +16,7 @@
                 <!-- TEXT -->
                 {{button.name}}
             </router-link>
-            <a style="float: right; margin-right: 40px; cursor: pointer" type="button" :class="{'is-active': fullscreen}" class="button top-button" @click="toggle" >Fullscreen</a>
+            <a style="float: right; margin-right: 40px; cursor: pointer" :class="{'is-active': fullscreen}" class="button top-button" @click="toggle" >Fullscreen</a>
         </div>
         <div class="router-2">
             <router-view></router-view>
@@ -45,6 +45,7 @@ export default {
             'getTimePeriod',
             'getAllIssues',
             'getEpics',
+            'getAppMode'
         ]),
         functions: () => FUNCTIONS
     },
@@ -133,6 +134,13 @@ export default {
                     icon: 'Cog'
                 },
             ],
+            partnerButtons: [
+                {
+                    name: 'News',
+                    url: '/home/news',
+                    icon: 'ViewCompact'
+                }
+            ]
         }
     },
     methods: {
@@ -141,6 +149,14 @@ export default {
             'loadData',
             'resetLoadedModules',
         ]),
+        getButtons() {
+            if(this.getAppMode == 'admin'){
+                return this.buttons
+            }
+            if(this.getAppMode == 'partner'){
+                return this.partnerButtons
+            }
+        },
         toggle () {
             this.fullscreen = !this.fullscreen
         },

@@ -14,7 +14,7 @@
                 <div v-if="getError && getError !== ''" id="email-error" class="alert alert-error form-row-alert">{{getError}}</div>
             </div>                
             <div style="" class="text-center mt-6">
-                <button type="submit" class="uk-button uk-button-default uk-button-large">Continue <span class="icon-chevron icon-chevron-white"></span></button>
+                <button style="    color: white;" type="submit" class="uk-button uk-button-default uk-button-large">Continue <span class="icon-chevron icon-chevron-white"></span></button>
             </div>
         </form>
     </div>
