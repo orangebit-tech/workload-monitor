@@ -38,6 +38,7 @@ async function fetchNewsLetter(){
         },
         withCredentials: true,
     }).then(async (res) => {
+        console.log("THIS IS RES ", res)
         var issues = []
         if(res.data && res.data){
             issues = res.data
@@ -45,7 +46,7 @@ async function fetchNewsLetter(){
         newsLetter = issues
         return newsLetter;
     }).catch((err) => {
-        console.log(err)
+        // console.log(err)
     })
 }
 async function fetchNews(){
@@ -77,18 +78,18 @@ async function fetchNews(){
         news = issues
         return news;
     }).catch((err) => {
-        console.log(err)
+        // console.log(err)
     })
 }
 async function fetchAllData(){
     var allDataResult = {}
     var urls = [
         // Issues
-        'https://americor.atlassian.net/rest/api/3/search?maxResults=100&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10118,customfield_10106,customfield_10107,customfield_10145,customfield_10117,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20%22Documentation%20Finished%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC',
+        'https://americor.atlassian.net/rest/api/3/search?maxResults=100&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10118,customfield_10106,customfield_10107,customfield_10145,customfield_10117,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20%22Documentation%20Finished%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20%22In%20Testing%22%2C%20%22Ready%20for%20testing%22)%20order%20by%20created%20DESC',
         // PM tasks
         'https://americor.atlassian.net/rest/api/3/search?maxResults=100&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10118,customfield_10106,customfield_10107,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(Backlog%2C%20Done%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22)%20order%20by%20created%20DESC',
         // Epics
-        'https://americor.atlassian.net/rest/api/3/search?maxResults=100&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,customfield_10118,duedate,customfield_10102,customfield_10105,customfield_10106,customfield_10107,customfield_10145,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20%3D%20Epic%20AND%20status%20in%20(Backlog%2C%20Closed%2C%20%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22Documentation%20Finished%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22Tech%20Review%22%2C%20Testing%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22%2C%20%22Writing%20Documentation%22)%20order%20by%20created%20DESC',
+        'https://americor.atlassian.net/rest/api/3/search?maxResults=100&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,customfield_10118,duedate,customfield_10102,customfield_10105,customfield_10106,customfield_10107,customfield_10145,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20%3D%20Epic%20AND%20status%20in%20(Backlog%2C%20Closed%2C%20%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22Documentation%20Finished%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22Tech%20Review%22%2C%20%22In%20Testing%22%2C%20%22Ready%20for%20testing%22%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22%2C%20%22Writing%20Documentation%22)%20order%20by%20created%20DESC',
     ]
     var subRequests = []
     var subRequestsMap = {issues: 0, pm: 0, epics: 0}
@@ -102,7 +103,7 @@ async function fetchAllData(){
     }))).then(
         axios.spread(async (...allData) => {
             allData.map((dat, ind) => {
-                console.log(ind)
+                // console.log(ind)
                 var mode = ''
                 if(ind == 0){
                     mode = 'issues'
@@ -155,7 +156,7 @@ async function fetchAllData(){
                 let subUrls = {
                     issues: [
                         'https://americor.atlassian.net/rest/api/3/search?startAt=',
-                        '&maxResults=100&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10118,customfield_10106,customfield_10107,customfield_10145,customfield_10117,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20%22Documentation%20Finished%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20Testing)%20order%20by%20created%20DESC'
+                        '&maxResults=100&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,duedate,customfield_10102,customfield_10118,customfield_10106,customfield_10107,customfield_10145,customfield_10117,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20in%20(%22Help%20Request%3A%20Issue%22%2C%20Improvement%2C%20%22New%20Feature%22%2C%20Task%2C%20%22Tech%20debt%22%2C%20Sub-task)%20AND%20status%20in%20(%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22In%20Development%22%2C%20%22Documentation%20Finished%22%2C%20Paused%2C%20%22Tech%20Review%22%2C%20%22In%20Testing%22%2C%20%22Ready%20for%20testing%22)%20order%20by%20created%20DESC'
                     ],
                     pm: [
                         'https://americor.atlassian.net/rest/api/3/search?startAt=',
@@ -163,7 +164,7 @@ async function fetchAllData(){
                     ],
                     epics: [
                         'https://americor.atlassian.net/rest/api/3/search?startAt=',
-                        '&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,customfield_10118,duedate,customfield_10102,customfield_10105,customfield_10106,customfield_10107,customfield_10145,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20%3D%20Epic%20AND%20status%20in%20(Backlog%2C%20Closed%2C%20%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22Documentation%20Finished%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22Tech%20Review%22%2C%20Testing%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22%2C%20%22Writing%20Documentation%22)%20order%20by%20created%20DESC'
+                        '&filter=-4&fields=id,key,parent,status,labels,priority,assignee,aggregatetimeestimate,creator,reporter,aggregateprogress,progress,issuetype,timespent,created,timeoriginalestimate,summary,customfield_10115,customfield_10118,duedate,customfield_10102,customfield_10105,customfield_10106,customfield_10107,customfield_10145,customfield_10117&jql=project%20%3D%20CRM%20AND%20issuetype%20%3D%20Epic%20AND%20status%20in%20(Backlog%2C%20Closed%2C%20%22Code%20Review%22%2C%20%22Development%20Plan%22%2C%20%22Documentation%20Finished%22%2C%20%22In%20Development%22%2C%20Paused%2C%20%22Released%20to%20Production%22%2C%20%22Team%20Code%20Review%22%2C%20%22Tech%20Review%22%2C%20%22In%20Testing%22%2C%20%22Ready%20for%20testing%22%2C%20%22To%20Document%22%2C%20%22Waiting%20for%20Release%22%2C%20%22Writing%20Documentation%22)%20order%20by%20created%20DESC'
                     ]
                 }
                 if(left >= max){
@@ -299,7 +300,7 @@ app.get('/jira/newsletter', async(req, res) => {
         await fetchNewsLetter()
         res.json(newsLetter);
     } catch (error){
-        console.log(error)
+        // console.log(error)
     }
 });
 app.get('/jira/news', async(req, res) => {
@@ -307,7 +308,7 @@ app.get('/jira/news', async(req, res) => {
         await fetchNews()
         res.json(news);
     } catch (error){
-        console.log(error)
+        // console.log(error)
     }
 });
 app.get('/jira/all', async(req, res) => {
@@ -315,7 +316,7 @@ app.get('/jira/all', async(req, res) => {
         var resp = await fetchAllData()
         res.json(resp)
     } catch (error){
-        console.log(error)
+        // console.log(error)
     }
 });
 
