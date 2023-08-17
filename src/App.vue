@@ -152,6 +152,8 @@ html, body {
 }
 html {
   background-color: #f3f4f6;
+  font-size: 14px !important;
+  overflow-y: unset !important;
 }
 body {
     color: #757575;
@@ -328,7 +330,7 @@ input {
     width: 100px !important;
     display: inline-block;
         text-align: center;
-        font-weight: 500;
+        font-weight: 400;
 
 }
 
