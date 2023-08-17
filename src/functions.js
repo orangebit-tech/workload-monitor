@@ -87,12 +87,18 @@ const sortedIssues = (items, filters, orderBy)=> {
         'Marketing'
     ]
     var all = []
+    function WLItemStatus (status) {
+        var st = status.toLowerCase()
+        return    st == 'in testing'                ? 'testing' 
+                : st == 'ready for testing'         ? 'testing' 
+                : st
+    }
     if(orderBy == 'assignee'){
         var assigneesBlackList = []
         if(localitems){
             localitems.map(item => {
                 var assignee = item.fields.assignee?.displayName ? item.fields.assignee.displayName : "Unassigned"
-                var status = item.fields.status.name.toLowerCase()
+                var status = WLItemStatus(item.fields.status.name)
                 if(!assignees.includes(assignee) && assignee !=='Unassigned'){
                     assignees.push(assignee)
                 }
@@ -111,7 +117,7 @@ const sortedIssues = (items, filters, orderBy)=> {
                         result[assignee][status] = []
                     }
                     // sort filter statuses
-                    if(item.fields.status && desiredStatusList.includes(item.fields.status.name.toLowerCase())){
+                    if(status && desiredStatusList.includes(status)){
                         all.push(item)
                         result[assignee][status].push(item)  
                     }
@@ -124,7 +130,7 @@ const sortedIssues = (items, filters, orderBy)=> {
         if(localitems){
             localitems.map(item => {
                 var developer = item.fields.customfield_10107?.displayName ? item.fields.customfield_10107.displayName : "Unassigned"
-                var status = item.fields.status.name.toLowerCase()
+                var status = WLItemStatus(item.fields.status.name)
                 if(!developers.includes(developer) && developer !=='Unassigned'){
                     developers.push(developer)
                 }
@@ -144,7 +150,7 @@ const sortedIssues = (items, filters, orderBy)=> {
                         result[developer][status] = []
                     }
                     // sort filter statuses
-                    if(item.fields.status && desiredStatusList.includes(item.fields.status.name.toLowerCase())){
+                    if(status && desiredStatusList.includes(status)){
                         all.push(item)
                         result[developer][status].push(item)                
                     }
@@ -159,7 +165,7 @@ const sortedIssues = (items, filters, orderBy)=> {
         var teamsBlackList = []
         if(localitems){
             localitems.map(item => {
-                var status = item.fields.status.name.toLowerCase()
+                var status = WLItemStatus(item.fields.status.name)
                 var team = item.fields.customfield_10102?.value ? item.fields.customfield_10102.value : "Unassigned"
                 if(!teams.includes(team) && team !=='Unassigned'){
                     teams.push(team)
@@ -179,7 +185,7 @@ const sortedIssues = (items, filters, orderBy)=> {
                         result[team][status] = []
                     }
                     // sort filter statuses
-                    if(item.fields.status && desiredStatusList.includes(item.fields.status.name.toLowerCase())){
+                    if(status && desiredStatusList.includes(status)){
                         all.push(item)
                         result[team][status].push(item)                
                     }
@@ -303,7 +309,7 @@ const sortedIssues = (items, filters, orderBy)=> {
         if(localitems){
             localitems.map(item => {
                 var status = ''
-                status = item.fields.status.name.toLowerCase()
+                status = WLItemStatus(item.fields.status.name)
                 
                 var dept = item.fields.customfield_10115 && item.fields.customfield_10115.value ? item.fields.customfield_10115.value : "Unassigned"
                 depts.push(dept)
@@ -321,8 +327,8 @@ const sortedIssues = (items, filters, orderBy)=> {
                     }
                     // sort filter statuses
                     if( item.fields.status &&  
-                        (desiredStatusDept.includes(item.fields.status.name.toLowerCase()) 
-                        || desiredStatusList.includes(item.fields.status.name.toLowerCase())
+                        (desiredStatusDept.includes(status) 
+                        || desiredStatusList.includes(status)
                         )){
                         all.push(item)
                         result[dept][status].push(item)                
